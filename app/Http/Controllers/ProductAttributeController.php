@@ -55,7 +55,7 @@ class ProductAttributeController extends Controller
         $rules = [
             // 'attribute_id' => 'required',
             // 'attribute_value_id' => 'required',
-            'attributes' => 'required|array',
+            'attributes' => 'required',
             'price' => 'required|numeric',
             'inventory' => 'required|integer',
             'sku' => 'required'
@@ -78,13 +78,13 @@ class ProductAttributeController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Already sku exists']);
         }
 
-        foreach($request->input('attributes') as $value){
-            $attData = explode(':', $value);
+        // foreach($request->input('attributes') as $value){
+            // $attData = explode(':', $value);
             // Create a new product attribute
             $productAttribute = new ProductAttribute();
             $productAttribute->product_id = $request->input('product_id');
-            $productAttribute->attribute_id = $attData[0];
-            $productAttribute->attribute_value_id = $attData[1];
+            // $productAttribute->attribute_id = $attData[0];
+            $productAttribute->attribute_value_id = $request->input('attributes');
             $productAttribute->sku = $validatedData['sku'];
             $productAttribute->inventory = $validatedData['inventory'];
             $productAttribute->price = $validatedData['price'];
@@ -93,7 +93,7 @@ class ProductAttributeController extends Controller
 
             // Save the product attribute
             $productAttribute->save();
-        }
+        // }
 
 
         
@@ -116,8 +116,107 @@ class ProductAttributeController extends Controller
                 // echo "<pre>"; print_r($request->all()); die("check");
 
         // Redirect to a success page or back to the form with a success message
-        return redirect()->route('product-attributes.index', $request->input('product_id'))->with('success', 'Product Attribute created successfully.');
+        // return redirect()->route('product-attributes.index', $request->input('product_id'))->with('success', 'Product Attribute created successfully.');
+        return redirect()->back()->with('success', 'Product Attribute created successfully.');
+
     }
+
+    // createAllvariation
+
+ 
+    public function createAllvariation(Request $request, $productId) {
+        // echo "ProductId : ".$productId;
+        // echo "<pre>"; print_r($request->all()); die("check");
+
+        $allAttribute = Attribute::with('attributeValues')->get();
+
+        $allAttr = [];
+        foreach ($allAttribute as $key => $value) {
+            $attributeId = $value->id;
+            $attrVal = [];            
+            foreach($value->attributeValues as $item) {
+                $attrVal[] = $item->id;
+            }
+            $allAttr[] = $attrVal;
+        }
+
+        // echo "<pre>"; print_r($allAttr); die("check data");
+
+        $result = [[]];
+        foreach ($allAttr as $property => $property_values) {
+            $tmp = [];
+            foreach ($result as $result_item) {
+                foreach ($property_values as $property_value) {
+                    $tmp[] = array_merge($result_item, [$property => $property_value]);
+                }
+            }
+            $result = $tmp;
+        }
+
+        $allcreatedVariant = $result;
+
+        
+
+        return view('product-attributes.select_variation', compact('allcreatedVariant', 'productId', 'allAttribute'));
+    }
+
+    public function selectattributeforproduct($product) {
+        $allAttribute = Attribute::with('attributeValues')->get();
+        return view('product-attributes.selectattributevalue', compact('allAttribute', 'product'));
+    }
+
+    public function generatefinalvariationonselection(Request $request, $productId) {
+        // echo "product : ".$product."<br>";
+        // echo "<pre>"; print_r($request->all()); die("check");
+        $allAttribute = Attribute::with('attributeValues')->get();
+        $result = [[]];
+        foreach ($request->all() as $property => $property_values) {
+            $tmp = [];
+            foreach ($result as $result_item) {
+                foreach ($property_values as $property_value) {
+                    $tmp[] = array_merge($result_item, [$property => $property_value]);
+                }
+            }
+            $result = $tmp;
+        }
+
+        $allcreatedVariant = $result;
+
+        
+
+        return view('product-attributes.select_variation', compact('allcreatedVariant', 'productId', 'allAttribute'));
+    }
+
+    public function generatevariation(Request $request) {
+        $variation = [];
+        $attributeArr = [];
+        foreach($request->input('attributes') as $key => $value) {
+           $attValue = [];
+            $data = explode(':', $value);
+            $attribute = $data[0];
+
+            
+            if(!in_array($attribute, $attributeArr)){
+                $attributeArr['attribute'] = $attribute;
+
+                foreach($request->input('attributes') as $key => $item) {
+                    $attributeData = explode(':', $item);
+                    if($attribute == $attributeData[0]) {
+                        $attValue[] = $attributeData[1];
+                    }
+
+                }
+
+                $attributeArr['attributeValue'] = $attValue;
+                $variation[] = $attributeArr;                
+            }
+
+
+
+        }
+        echo "<pre>"; print_r($variation); print_r($request->all('attributes')); die("check");
+    }
+
 
 
     public function show(ProductAttribute $productAttribute)
@@ -134,8 +233,34 @@ class ProductAttributeController extends Controller
 
     public function update(Request $request, ProductAttribute $productAttribute)
     {
-        // Validate and update the product attribute
-        // Redirect to the index view with a success message
+
+        ProductAttribute::where('sku', $request->input('sku'))
+       ->update([
+           'price' => $request->input('price'),
+           'inventory' => $request->input('inventory')
+
+        ]);
+
+        if ($request->hasFile('files')) {
+         
+            $images = $request->file('files');
+            // echo "<pre>"; print_r($images); die("check");
+            foreach ($images as $key => $image) {
+                $imagePath = $image->store('product_images', 'public');
+
+                $image = new ProductAttributeImage();
+                // $image->product_attribute_id = $productAttribute->id;
+                $image->sku = $request->input('sku');
+                $image->image_path = $imagePath;
+                $image->save();
+                // echo "<pre>"; print_r($image); die("check");
+            }
+        }
+
+        // return redirect()->route('product-attributes.index', $request->input('product_id'))->with('success', 'Product Attribute updated successfully.');
+        return redirect()->back()->with('success', 'Product Attribute updated successfully.');
+
+
     }
 
     public function destroy(ProductAttribute $productAttribute)

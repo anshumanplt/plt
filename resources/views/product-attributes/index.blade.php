@@ -32,7 +32,7 @@
             <tbody>
                 @foreach($productAttributes as $attribute)
                     <tr>
-                        <td>{{ $attribute->product->name }}</td>
+                        <td>{{ $attribute->product->name }} {{ $attribute->product->id }}</td>
                         <td>
 
                             {{ $attribute->attribute->name }}
@@ -42,7 +42,7 @@
                         <td>{{ $attribute->price }}</td>
                         <td>{{ $attribute->inventory }}</td>
                         <td>
-                            <a href="{{ route('product-attributes.showImages', $attribute->sku ) }}" class="btn btn-info btn-lg" >View Images</a>
+                            <a href="{{ route('product-attributes.showImages', [ 'sku' => $attribute->sku, 'productid' => $attribute->product->id ]) }}" class="btn btn-info btn-lg" >View Images</a>
                         </td>
                         <!-- Add more table cells for other attributes -->
                     </tr>

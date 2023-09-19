@@ -44,17 +44,27 @@ Route::middleware('auth:admin')->group(function () {
     // Route::get('dashboard', 'AdminDashboardController@index')->name('admin.dashboard');
     // Add other admin routes that require authentication
 
-    Route::get('product-attributes/index/{id}', [ProductAttributeController::class, 'index'])->name('product-attributes.index');
+    Route::get('product-attributes/index/{sku}', [ProductAttributeController::class, 'index'])->name('product-attributes.index');
 
     Route::get('product-attributes/create/{id}', [ProductAttributeController::class, 'create'])->name('product-attributes.create');
 
     Route::post('product-attributes/store', [ProductAttributeController::class, 'store'])->name('product-attributes.store');
+
+    Route::put('product-attributes/update/{id}', [ProductAttributeController::class, 'update'])->name('product-attributes.update');
 
     Route::get('product-attributes/show-images/{sku}/{productid}', [ProductAttributeController::class, 'showProductImages'])->name('product-attributes.showImages');
 
     Route::get('product-attributes/delete-images/{id}', [ProductAttributeController::class, 'deleteProductImages'])->name('product-attributes.deleteProductImages');
 
     Route::get('/get-attribute-values', [ProductAttributeController::class, 'getAttributeValues'])->name('get-attribute-values');
+
+    Route::get('product-attributes/createAllvariation/{id}', [ProductAttributeController::class, 'createAllvariation'])->name('product-attributes.createAllvariation');
+
+    Route::post('product-attributes/generatevariation', [ProductAttributeController::class, 'generatevariation'])->name('product-attributes.generatevariation');
+
+    Route::get('product-attributes/create-selected-attribute/{id}', [ProductAttributeController::class, 'generatefinalvariationonselection'])->name('product-attributes.generatefinalvariationonselection');
+
+    Route::get('product-attributes/select-attribute-value-for-product/{id}', [ProductAttributeController::class, 'selectattributeforproduct'])->name('product-attributes.selectattributeforproduct');
 
     // Add Admin Users
 
@@ -126,11 +136,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
-Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
-Route::post('/payment/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
+// Route::post('/payment/process/{orderid}', [PaymentController::class, 'processPayment'])->name('payment.process');
+Route::get('/payment/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
 Route::post('/payment/fail', [PaymentController::class, 'paymentFail'])->name('payment.fail');
 
-Route::get('/payment/process', [RazorpayController::class, 'createOrder'])->name('payment.process');
+Route::get('/payment/process/{orderid}', [RazorpayController::class, 'createOrder'])->name('payment.process');
 // Route::prefix('myaccount')->middleware('auth')->group(function () {
 //     Route::get('dashboard', 'MyAccountController@dashboard')->name('myaccount.dashboard');
 //     Route::get('orders', 'MyAccountController@orders')->name('myaccount.orders');
@@ -155,13 +165,13 @@ Route::get('/search', [App\Http\Controllers\FrontController::class, 'search'])->
 Route::get('/cart', [CartController::class, 'index'])
     ->name('cart.index');
     
-Route::post('/ajaxcart/add/{product?}', [CartController::class, 'add'])
+Route::post('/ajaxcart/add/{product?}/{sku?}', [CartController::class, 'add'])
     ->name('ajaxcart.add');
 
-Route::get('/cart/add/{product?}', [CartController::class, 'add'])
+Route::get('/cart/add/{product?}/{sku?}', [CartController::class, 'add'])
     ->name('cart.add');
 
-Route::put('/cart/update/{product}', [CartController::class, 'update'])
+Route::put('/cart/update/{product}/{sku?}', [CartController::class, 'update'])
     ->name('cart.update');
 
 Route::get('/cart/remove/{product}', [CartController::class, 'remove'])
@@ -169,7 +179,7 @@ Route::get('/cart/remove/{product}', [CartController::class, 'remove'])
 
 Route::get('/', [App\Http\Controllers\FrontController::class, 'index'])->name('home');
 Route::get('/category/{id}', [App\Http\Controllers\FrontController::class, 'category']);
-Route::get('/product-detail/{id}', [App\Http\Controllers\FrontController::class, 'product']);
+Route::get('/product-detail/{id}/{sku?}', [App\Http\Controllers\FrontController::class, 'product']);
 
 Route::get('/category-page', function () {
     return view('category');

@@ -120,27 +120,10 @@ class OrderController extends Controller
     
             $order->save();
             
-            // echo "<pre>"; print_r($order); die("check");
+      
             
             $totalAmount = 0;
-    
-            // foreach ($cartItems as $cartItem) {
-            //     $product = Product::findOrFail($cartItem->product_id);
-                
-            //     // $order->products()->attach($product, ['quantity' => $cartItem->quantity]);
-                
 
-
-            //     // Update product quantity
-            //     // $product->decrement('quantity', $cartItem->quantity);
-    
-            //     // Calculate total amount
-            //     $totalAmount += $product->sale_price * $cartItem->quantity;
-               
-            //     // Remove the cart item
-            //     $cartItem->delete();
-               
-            // }
 
             foreach ($cartItems as $cartItem) {
                 $product = Product::findOrFail($cartItem->product_id);
@@ -148,13 +131,7 @@ class OrderController extends Controller
                 // Calculate subtotal
                 $subtotal = $product->sale_price * $cartItem->quantity;
                
-                // Associate the product with the order and store pivot data
-                // $order->products()->attach($product, [
-                //     'quantity' => $cartItem->quantity,
-                //     'unit_price' => $product->sale_price,
-                //     'subtotal' => $subtotal,
-                // ]);
-
+             
                 // Create and store the order item
                 $orderItem = new OrderItem([
                     'order_id' => $order->id,
@@ -183,8 +160,16 @@ class OrderController extends Controller
            
             // Commit the transaction
             DB::commit();
-    
-            return redirect()->route('orders.index')->with('success', 'Order placed successfully.');
+            
+            if($request->input('payment_method') == "COD") {
+                 return redirect()->route('orders.index')->with('success', 'Order placed successfully.');
+            }else{
+                return redirect()->route('payment.process', $order->id);
+            }
+           
+
+            
+
             // return redirect('/')->with('success', 'Order placed successfully.');
 
         } catch (\Exception $e) {

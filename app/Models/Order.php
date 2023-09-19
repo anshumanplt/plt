@@ -14,6 +14,8 @@ class Order extends Model
         'payment_method',
         'order_state',
         'total_amount',
+        'payment_status',
+        'payment_id'
     ];
 
     // public function products()

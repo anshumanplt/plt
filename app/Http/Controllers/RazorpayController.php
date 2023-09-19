@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Razorpay\Api\Api;
 use App\Models\Category;
+use App\Models\Order;
 
 class RazorpayController extends Controller
 {
-    public function createOrder()
+    public function createOrder($orderIdData)
     {
-   
+        $orderData = Order::where('id', $orderIdData)->first();
+        // echo "<pre>"; print_r($orderData); die("check");
         // echo "RAZORPAY_KEY : ".env('RAZORPAY_KEY')."<br>";
         // echo "RAZORPAY_SECRET : ".env('RAZORPAY_SECRET')."<br>";
 
@@ -32,15 +34,15 @@ class RazorpayController extends Controller
         $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
 
         $order = $api->order->create([
-            'amount' => 5000, // Order amount in paise
+            'amount' => $orderData->total_amount * 100, // Order amount in paise
             'currency' => 'INR',
             'payment_capture' => 1 // Auto-capture payment
         ]);
 
         $orderId = $order->id;
 
-        $orderAmount = 5000;
+        $orderAmount = $orderData->total_amount * 100;
 
-        return view('razorpay.payment', compact('orderId', 'orderAmount', 'categories'));
+        return view('razorpay.payment', compact('orderId', 'orderAmount', 'orderIdData','categories'));
     }
 }

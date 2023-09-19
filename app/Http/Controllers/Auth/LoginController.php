@@ -60,6 +60,7 @@ class LoginController extends Controller
         foreach ($guestCart as $productId => $item) {
             $user->carts()->updateOrCreate(
                 ['product_id' => $productId],
+                ['sku' => $item['sku']],
                 ['quantity' => $item['quantity']]
             );
         }

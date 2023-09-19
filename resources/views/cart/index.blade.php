@@ -58,6 +58,7 @@
                                         @endif
                                         <div class="cart__product__item__title">
                                             <h6>{{ $cartItem->name }}</h6>
+                                            <p>{{ $cartItem->sku }}</p>
                                             {{-- <div class="rating">
                                                 <i class="fa fa-star"></i>
                                                 <i class="fa fa-star"></i>
@@ -71,7 +72,7 @@
                                     <td class="cart__quantity">
                                         {{-- <div class="pro-qty"> --}}
                                             {{-- <input type="text" value="{{ $cartItem->quantity }}"> --}}
-                                            <form action="{{ route('cart.update', $cartItem->id) }}" method="POST">
+                                            <form action="{{ route('cart.update', ['product' => $cartItem->id, 'sku' => $cartItem->sku]) }}" method="POST">
                                                 @csrf                            
                                                 <input type="hidden" name="_method" value="PUT">                            
                                                 <input type="number" name="quantity" value="{{ $cartItem->quantity }}" class="col-sm-4" min="1" fdprocessedid="k2zmpw">

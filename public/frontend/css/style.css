@@ -87,6 +87,10 @@ img {
 	max-width: 100%;
 }
 
+.header__logo img {
+	max-width: 70%;
+}
+
 input:focus,
 select:focus,
 button:focus,

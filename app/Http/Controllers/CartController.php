@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class CartController extends Controller
 {
 
-    public function add(Request $request, $productId = '')
+    public function add(Request $request, $productId = '', $sku = '')
     {
         if($productId) {
             $productId = $productId;
@@ -25,10 +25,29 @@ class CartController extends Controller
         // If user is logged in, add to user's cart
         if (Auth::check()) {
             $user = Auth::user();
-            $user->carts()->updateOrCreate(
-                ['product_id' => $productId],
-                ['quantity' => $quantity]
-            );
+            // echo "SKU".$sku; die("check");
+
+            // $checkCart = Cart::where([ 'product_id' => $productId ])->first();
+
+            // $cartAdd = Cart::create([
+            //     'product_id' => $productId,
+            //     'quantity' => $quantity,
+            //     'sku' => $sku
+            // ]);
+
+            $cart = Cart::updateOrCreate([
+                'user_id' => $user->id
+            ],[
+                'product_id' => $productId,
+                'quantity' => $quantity,
+                'sku' => $sku
+            ]);
+
+            // $user->carts()->updateOrCreate(
+            //     ['product_id' => $productId],
+            //     ['quantity' => $quantity],
+            //     ['sku' => $sku]
+            // );
         } else {
             // If guest, add to session cart
             $guestCart = session('guest_cart', []);
@@ -38,7 +57,7 @@ class CartController extends Controller
                 $guestCart[$productId] = [
                     // 'quantity' => $request->input('quantity', 1),
                     'quantity' => $quantity,
-
+                    'sku' => $sku
                 ];
             }
             session(['guest_cart' => $guestCart]);
@@ -47,7 +66,7 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Product added to cart.');
     }
 
-    public function update(Request $request, $productId)
+    public function update(Request $request, $productId, $sku)
     {
         $product = Product::findOrFail($productId);
 
@@ -57,13 +76,15 @@ class CartController extends Controller
             $user = Auth::user();
             $user->carts()->updateOrCreate(
                 ['product_id' => $productId],
-                ['quantity' => $quantity]
+                ['quantity' => $quantity],
+                ['sku' => $sku]
             );
         } else {
             // If guest, update session cart item
             $guestCart = session('guest_cart', []);
             if (isset($guestCart[$productId])) {
                 $guestCart[$productId]['quantity'] = $quantity;
+                $guestCart[$productId]['sku'] = $sku;
                 session(['guest_cart' => $guestCart]);
             }
         }

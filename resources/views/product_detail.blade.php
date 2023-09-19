@@ -21,35 +21,43 @@
     <section class="product-details spad">
         <div class="container">
             <div class="row">
-              
+            
                 <div class="col-lg-6">
                     <div class="product__details__pic">
                         <div class="product__details__pic__left product__thumb nice-scroll">
-                            @foreach ($product->productImages as $key => $item)
-                                <a class="pt active" href="#product-{{$key}}">
-                                    <img src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
-                                </a>                                
-                            @endforeach
-
-
-                            {{-- <a class="pt" href="#product-2">
-                                <img src="{{ url('/frontend/img/product/details/thumb-2.jpg') }}" alt="">
-                            </a>
-                            <a class="pt" href="#product-3">
-                                <img src="{{ url('/frontend/img/product/details/thumb-3.jpg') }}" alt="">
-                            </a>
-                            <a class="pt" href="#product-4">
-                                <img src="{{ url('/frontend/img/product/details/thumb-4.jpg') }}" alt="">
-                            </a> --}}
+                           
+                            @if(count($variantData) > 0)
+                                @if(count($variantData['productSKUImages']) > 0)
+                                    @foreach ($variantData['productSKUImages'] as $key => $item)
+                                        <a class="pt active" href="#product-{{$key}}">
+                                            <img src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
+                                        </a>                                
+                                    @endforeach
+                                @endif
+                            @else
+                                @foreach ($product->productImages as $key => $item)
+                                    <a class="pt active" href="#product-{{$key}}">
+                                        <img src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
+                                    </a>                                
+                                @endforeach   
+                            @endif 
                         </div>
                         <div class="product__details__slider__content">
                             <div class="product__details__pic__slider owl-carousel">
-                                @foreach ($product->productImages as $key => $item)
-                                    <img data-hash="product-{{ $key }}" class="product__big__img" src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
-                                @endforeach
-                                {{-- <img data-hash="product-2" class="product__big__img" src="{{ url('/frontend/img/product/details/product-3.jpg') }}" alt="">
-                                <img data-hash="product-3" class="product__big__img" src="{{ url('/frontend/img/product/details/product-2.jpg') }}" alt="">
-                                <img data-hash="product-4" class="product__big__img" src="{{ url('/frontend/img/product/details/product-4.jpg') }}" alt=""> --}}
+                                @if(count($variantData) > 0)
+                                    @if(count($variantData['productSKUImages']) > 0)
+                                        @foreach ($variantData['productSKUImages'] as $key => $item)
+                                            <img data-hash="product-{{ $key }}" class="product__big__img" src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
+                                        @endforeach   
+                                    @endif
+                                @else
+                                    @foreach ($product->productImages as $key => $item)
+                                        <img data-hash="product-{{ $key }}" class="product__big__img" src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
+                                    @endforeach
+                                @endif
+
+
+                  
                             </div>
                         </div>
                     </div>
@@ -72,7 +80,17 @@
                             <i class="fa fa-star"></i>
                             <span>( 138 reviews )</span> --}}
                         </div>
-                        <div class="product__details__price">₹ {{ $product->sale_price }}<span>₹ {{ $product->price }}</span></div>
+
+                        <div class="product__details__price">
+                            @if(count($variantData) > 0) 
+                                ₹ {{ $variantData['productSku']->price }}
+                            @else
+                                ₹ {{ $product->sale_price }}
+                            @endif
+                                
+                        
+                            <span>₹ {{ $product->price }}</span></div>
+                        <p>@if(count($variantData) > 0) <b>SKU:</b> {{ $variantData['productSku']->sku }} @endif</p>
                         <p>{{ $product->description }}</p>
                         <div class="product__details__button">
                             {{-- <div class="quantity">
@@ -81,7 +99,12 @@
                                     <input type="text" value="1">
                                 </div>
                             </div> --}}
-                            <a href="{{ url('/cart/add') }}/{{ $product->id }}" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                            @if(count($variantData) > 0) 
+                                <a href="{{ url('/cart/add') }}/{{ $product->id }}@if(count($variantData) > 0)/{{ $variantData['productSku']->sku }} @endif"   class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                            @else
+                            <a href="javascript:void(0)" onclick="alert('Please select product variant.')"  class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+
+                            @endif
                             <ul>
                                
 
@@ -104,34 +127,63 @@
                             </ul>
                         </div>
                         <div class="product__details__widget">
-                            <ul>
-                                {{-- <li>
-                                    <span>Availability:</span>
-                                    <div class="stock__checkbox">
-                                        <label for="stockin">
-                                            In Stock
-                                            <input type="checkbox" id="stockin">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </div>
-                                </li> --}}
-
-                                @foreach ($allAttribute as $item)
-                                    <li>
-                                        <span>{{ $item->name }}:</span>
-                                        <div class="checkbox">
-                                            @foreach ($item->attributeValues as $value)
-                                                <label for="">
-                                                    <label for="">{{ $value->value }}</label>   
-                                                    <input type="radio" name="{{ $item->name }}" id="" >
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                            @endforeach
-                                            
-                                           
+                            <form action="{{ url('/product-detail') }}/{{ $product->id }}" method="get">
+                                @csrf
+                                @foreach ($allAttribute as $key => $item)
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <span>{{ $item->name }}:</span>
                                         </div>
-                                    </li>
+                                        <div class="col-sm-8">
+                                            <div class="stock__checkbox">
+                                                @foreach($item->attributeValues as $value) 
+                                                    @if(in_array($value->id, $allSelectedAttributevalue))
+                                                        <label for="">
+                                                            <label for="">{{ $value->value }}</label>   
+                                                            <input type="radio" name="{{ $item->name }}" @if( request()->get($item->name) )  @if($value->id == request()->get($item->name)) checked @endif @endif value="{{ $value->id }}" id="">
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
+                                <button type="submit">Submit Variants</button>
+                            </form>
+                            
+                            <form action="{{ url('/product-detail') }}/{{ $product->id }}" method="get" style="display: none;">
+                                @csrf
+                                @foreach ($allAttribute as $key => $item)
+                          
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <span>{{ $item->name }}:</span>
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <div class="stock__checkbox">
+                                                
+                                                    @foreach($allArray as $key1 => $value)
+                                                        @if($value['attribute_id'] == $item->id) 
+                                                        <label for="">
+                                                            <label for="">{{ $value['value'] }}</label>   
+                                                            <input type="radio" name="{{ $item->name }}" value="{{ $value['id'] }}" id="">
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                        @endif
+
+                                                    @endforeach
+                                                    
+                                                    
+
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                @endforeach
+                                <button type="submit">Submit Variants</button>
+                            </form>
 
                              
                              
@@ -139,7 +191,7 @@
                                     <span>Promotions:</span>
                                     <p>Free shipping</p>
                                 </li> --}}
-                            </ul>
+                            {{-- </ul> --}}
                         </div>
                     </div>
                 </div>
@@ -223,4 +275,16 @@
         </div>
     </section>
     <!-- Product Details Section End -->
+
+    <script>
+ 
+        function getAttribute() {
+            e.preventDefault();
+            alert("check");
+        }
+     
+        // attribute, attributeValue
+    
+    </script>
+
 @endsection

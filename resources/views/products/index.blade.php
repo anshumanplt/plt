@@ -2,6 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="card">
     <div class="card-body">
     <div class="container">
@@ -38,7 +39,9 @@
                             <a href="{{ route('products.show', $product->id) }}"><span class="mdi mdi-eye-circle"></span></a>
                             <a href="{{ route('products.edit', $product->id) }}"><span class="mdi mdi-pencil-box"></span></a>
                             <a href="{{ route('products.images.index', $product->id) }}" ><span class="mdi mdi-image-multiple"></span></a><br>
-                            <a href="{{ route('product-attributes.index', $product->id) }}"><span class="mdi mdi-ticket"></span></a>
+                            {{-- <a href="{{ route('product-attributes.index', $product->id) }}"><span class="mdi mdi-ticket"></span></a> --}}
+                            {{-- <a href="{{ route('product-attributes.createAllvariation',  $product->id) }}" ><span class="mdi mdi-ticket"></span></a> --}}
+                            <a href="{{ route('product-attributes.selectattributeforproduct',  $product->id) }}"><span class="mdi mdi-ticket"></span></a>
                             <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')

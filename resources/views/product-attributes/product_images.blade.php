@@ -14,7 +14,7 @@
                 {{ session('success') }}
             </div>
         @endif
-        <a href="{{ route('product-attributes.create', $productId) }}"  class="btn btn-primary" >Add variant to product</a>
+        {{-- <a href="{{ route('product-attributes.create', $productId) }}"  class="btn btn-primary" >Add variant to product</a> --}}
         <a href="{{ route('products.index') }}"  class="btn btn-primary" >Back to product listing</a>
         <table class="table">
             <thead>

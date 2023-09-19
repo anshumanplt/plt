@@ -5,6 +5,9 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Attribute;
+use App\Models\AttributeValue;
+use App\Models\ProductAttribute;
+use App\Models\ProductAttributeImage;
 
 class FrontController extends Controller
 {
@@ -90,6 +93,7 @@ class FrontController extends Controller
     }
 
     public function product($product, Request $request) {
+
         $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
 
         $allMenu = [];
@@ -99,7 +103,7 @@ class FrontController extends Controller
             $allMenu[] = $value;
         }
 
-
+        $allSelectedAttribute = ProductAttribute::where('product_id', $product)->get();
 
         $categories = $allMenu;
 
@@ -109,7 +113,77 @@ class FrontController extends Controller
 
         $allAttribute = Attribute::with('attributeValues')->get();
         
-        return view('product_detail', compact('product', 'categories', 'relatedProduct', 'allAttribute'));
+
+
+        // echo "<pre>"; print_r($allSelectedAttribute); echo "</pre>"; die("check");
+
+        // New 15-09-2023
+
+        // $productAssignedAttribute = [];
+        // $attributeArr = [];
+        // foreach($allAttribute as $item) {
+        //     $data['name'] = $item->name;
+        //     $data['id'] = $item->id;
+        //     $data['attributeVal'] = [];
+        //     $attributeArr[] = $data;
+        // }
+
+        $allSelectedAttributevalue = [];
+
+        foreach($allSelectedAttribute as $item) {
+            $attributeValue = explode(',', $item->attribute_value_id);
+            foreach($attributeValue as $item) {
+                if(!in_array($item,$allSelectedAttributevalue)) {
+                    $allSelectedAttributevalue[] = $item;
+                }
+
+            }
+
+        }
+
+
+        // echo "<pre>"; print_r($allSelectedAttributevalue);  die("check");
+
+        // End New 15-09-2023
+
+
+        $allArray = [];
+        foreach($allSelectedAttribute as $value) {
+            $atval = [];
+            $attributeValue = explode(',', $value->attribute_value_id);
+            foreach($attributeValue as $item) {
+                $att = AttributeValue::where('id', $item)->first();
+                $data = [
+                    'attribute_id'  => $att->attribute_id,
+                    'id'  => $att->id,
+                    'value' => $att->value
+                ];
+                $atval[] = $data;
+            }
+
+            foreach($atval as $d) {
+                $allArray[] = $d;
+            }
+            
+        }
+
+        $Size = $request->get('Size');
+        $Color= $request->get('Color');
+        $Fabric= $request->get('Fabric');
+        $variantData = [];
+        if($Size && $Color && $Fabric) {
+            $productSku = ProductAttribute::where(['attribute_value_id' => $Size.','.$Color.','.$Fabric, 'product_id' => $product->id])->first();
+            // echo "<pre>"; echo $Size.','.$Color.','.$Fabric; echo $product->id; print_r($productSku); die("check");
+            $productSKUImages = ProductAttributeImage::where(['sku' => $productSku->sku])->get();
+            $variantData = [
+                'productSku' => $productSku,
+                'productSKUImages' => $productSKUImages
+            ];
+        }
+
+        
+
+        return view('product_detail', compact('product', 'categories', 'relatedProduct', 'allAttribute', 'allSelectedAttribute', 'allArray', 'variantData', 'allSelectedAttributevalue'));
     }
 
 }

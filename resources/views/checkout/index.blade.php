@@ -196,12 +196,22 @@
                             <form action="{{ route('orders.place-order') }}" method="POST">
                                 @csrf
                             <div class="checkout__order__widget">
+                                <label for="">Payment Method</label>
+                                <select name="payment_method" id="" class="form-control">
+                                    <option value="COD">COD</option>
+                                    <option value="Netbanking">Netbanking</option>
+                                </select>
                                 {{-- <input type="hidden" name="address_id" value=""> --}}
-                                <label for="paypal">
+                                {{-- <label for="cod">
                                     Cash on delivery
-                                    <input type="checkbox" id="" checked name="payment_method" value="cod">
+                                    <input type="checkbox" id=""  name="payment_method" value="cod">
                                     <span class="checkmark"></span>
                                 </label>
+                                <label for="paypal">
+                                    Netbanking
+                                    <input type="checkbox" id=""  name="payment_method" value="netbanking">
+                                    <span class="checkmark"></span>
+                                </label> --}}
                             </div>
                             <button type="submit" class="site-btn">Place oder</button>
                             </form>

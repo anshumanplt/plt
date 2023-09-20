@@ -35,13 +35,21 @@
 
                 </tr>
                 @foreach ($orders as $order)
+                @php 
+                    $cityData = App\Models\City::where('id', $order->address->city)->first();
+                    $stateData = App\Models\State::where('id', $order->address->state)->first();
+                    $countryData = App\Models\Country::where('id',$order->address->country)->first();
+                @endphp
                     <tr>
                         <td> {{ $order->id }}</td>
                         <td> ₹{{ $order->total_amount }}</td>
                         <td>{{ $order->payment_method }}</td>
-                        <td> <p>{{ $order->address->address1 }}</p>
+                        <td> <p><b>Address 1 :</b>{{ $order->address->address1 }}</p><br>
+                            <p><b>Address 2 :</b>{{ $order->address->address2 }}</p><br>
+                            <p><b>City :</b>{{ $cityData->name }}, <br><b>State :</b>{{ $stateData->name }},<br> <b>Country :</b>{{ $countryData->name }}</p></td>
+                        {{-- <td> <p>{{ $order->address->address1 }}</p>
                             <p>{{ $order->address->address2 }}</p>
-                            <p>{{ $order->address->city }}, {{ $order->address->state }}, {{ $order->address->country }}</p></td>
+                            <p>{{ $order->address->city }}, {{ $order->address->state }}, {{ $order->address->country }}</p></td> --}}
                         <td>{{ $order->order_state }}</td>
                         <td><a href="{{ route('orders.show', $order->id) }}">View Details</a></td>
                     </tr>

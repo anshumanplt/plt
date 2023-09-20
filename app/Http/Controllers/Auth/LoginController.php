@@ -56,6 +56,8 @@ class LoginController extends Controller
         // Get guest cart items from session
         $guestCart = session('guest_cart', []);
 
+        // echo "<pre>"; print_r($guestCart); die("check");
+
         // Loop through guest cart items and sync with user's cart
         foreach ($guestCart as $productId => $item) {
             $user->carts()->updateOrCreate(
@@ -63,6 +65,7 @@ class LoginController extends Controller
                 ['sku' => $item['sku']],
                 ['quantity' => $item['quantity']]
             );
+
         }
 
         // Clear guest cart from session

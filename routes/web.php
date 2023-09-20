@@ -97,6 +97,10 @@ Route::middleware('auth:admin')->group(function () {
 
     Route::get('products/images/feature/{productId}/{imageId}', [ProductImageController::class, 'updateFeatureImage']);
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('admindashboard');
+
+    Route::get('admin/orders', [OrderController::class, 'getallorders'])->name('allorders');
+    Route::get('admin/orders/{order}', [OrderController::class, 'showadmin'])->name('admin.orders.show');
+    Route::put('admin/orders/updatestatus/{order}', [OrderController::class, 'updatestatus'])->name('admin.orders.updatestatus');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -135,6 +139,8 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+Route::get('/make-shipping-order', [OrderController::class, 'makeshippingorder'])->name('make.shipping.order');
+
 Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
 // Route::post('/payment/process/{orderid}', [PaymentController::class, 'processPayment'])->name('payment.process');
 Route::get('/payment/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
@@ -158,7 +164,10 @@ Route::get('/payment/process/{orderid}', [RazorpayController::class, 'createOrde
 
 Route::get('get-states/{country_id}', [StateController::class, 'getStates']);
 Route::get('get-cities/{state_id}', [CityController::class, 'getCities']);
-Route::post('addresses/{id}/set-default', [CheckoutController::class, 'setDefaultAddress'])->name('addresses.set-default');
+// Route::post('addresses/{id}/set-default', [CheckoutController::class, 'setDefaultAddress'])->name('addresses.set-default');
+Route::post('addresses/set-default', [CheckoutController::class, 'setDefaultAddress'])->name('addresses.set-default');
+
+Route::post('/notifyme', [App\Http\Controllers\FrontController::class, 'notifyme'])->name('notifyme');
 
 Route::get('/search', [App\Http\Controllers\FrontController::class, 'search'])->name('search');
 
@@ -180,6 +189,19 @@ Route::get('/cart/remove/{product}', [CartController::class, 'remove'])
 Route::get('/', [App\Http\Controllers\FrontController::class, 'index'])->name('home');
 Route::get('/category/{id}', [App\Http\Controllers\FrontController::class, 'category']);
 Route::get('/product-detail/{id}/{sku?}', [App\Http\Controllers\FrontController::class, 'product']);
+
+
+// Static Pages
+
+Route::get('/about-us', [App\Http\Controllers\FrontController::class, 'aboutus'])->name('aboutus');
+Route::get('/contact-us', [App\Http\Controllers\FrontController::class, 'contactus'])->name('contactus');
+Route::get('/privacy-policy', [App\Http\Controllers\FrontController::class, 'privacypolicy'])->name('privacypolicy');
+Route::get('/terms-condition', [App\Http\Controllers\FrontController::class, 'termscondition'])->name('termscondition');
+Route::get('/shipping-policy', [App\Http\Controllers\FrontController::class, 'shippingpolicy'])->name('shippingpolicy');
+Route::get('/payment-policy', [App\Http\Controllers\FrontController::class, 'paymentpolicy'])->name('paymentpolicy');
+Route::get('/dispute-resolution', [App\Http\Controllers\FrontController::class, 'disputeresolution'])->name('disputeresolution');
+Route::get('/genuine-quality-product', [App\Http\Controllers\FrontController::class, 'genuinequalityproduct'])->name('genuinequalityproduct');
+// End Static Pages
 
 Route::get('/category-page', function () {
     return view('category');

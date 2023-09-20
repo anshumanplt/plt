@@ -48,24 +48,36 @@
                                     $cartTotal = 0;  
                                 @endphp
                                 @foreach ($cartItems as $cartItem)
+
+                                @if($cartItem->sku) 
+                                    @php
+                                        $getPrice = \App\Models\ProductAttribute::where('sku', $cartItem->sku)->first();
+                                        $getAttributeImage = \App\Models\ProductAttributeImage::where('sku', $cartItem->sku)->first();
+                                    //    echo '₹ '.$getPrice->price;
+                                        $finalPrice =  $getPrice->price;
+                                    @endphp
+                                @else
+                                    @php 
+                                        $finalPrice =  $cartItem->sale_price;
+                                    @endphp
+
+                                @endif 
                                 <tr>
                                     <td class="cart__product__item">
                                         {{-- <img src="{{ url('/frontend/img/shop-cart/cp-1.jpg') }}" alt=""> --}}
-                                        @if (count($cartItem->images) > 0)
-                                            <img src="@if(count($cartItem->images) > 0) {{ asset('../storage/app/public/'.$cartItem->images[0]->image_path) }}@endif" alt="Product Image" width="50">
+                                        @if($getAttributeImage)
+                                            <img src="{{ asset('../storage/app/public/'.$getAttributeImage->image_path) }}" alt="Product Image" width="50"> 
                                         @else
-                                            No Image
+                                            @if (count($cartItem->images) > 0)
+                                                <img src="@if(count($cartItem->images) > 0) {{ asset('../storage/app/public/'.$cartItem->images[0]->image_path) }}@endif" alt="Product Image" width="50">
+                                            @else
+                                                No Image
+                                            @endif
                                         @endif
+
                                         <div class="cart__product__item__title">
                                             <h6>{{ $cartItem->name }}</h6>
                                             <p>{{ $cartItem->sku }}</p>
-                                            {{-- <div class="rating">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                            </div> --}}
                                         </div>
                                     </td>
 
@@ -80,12 +92,13 @@
                                             </form>
                                         {{-- </div> --}}
                                     </td>
-                                    <td class="cart__price">₹ {{ $cartItem->sale_price }}</td>
-                                    <td class="cart__total">₹ {{ $cartItem->quantity * $cartItem->sale_price }}</td>
+
+                                    <td class="cart__price">₹ {{ $finalPrice }}</td>
+                                    <td class="cart__total">₹ {{ $cartItem->quantity * $finalPrice }}</td>
                                     <td class="cart__close"> <a href="{{ route('cart.remove', $cartItem->id) }}"><span class="icon_close"></span></a></td>
                                 </tr>
                                 <?php
-                                    $cartTotal += $cartItem->sale_price * $cartItem->quantity; // Update cart total
+                                    $cartTotal += $finalPrice * $cartItem->quantity; // Update cart total
                                 ?>
                                 @endforeach
                             </tbody>
@@ -122,7 +135,8 @@
                         <h6>Cart total</h6>
                         <ul>
                             <li>Subtotal <span>₹ {{ $cartTotal }}</span></li>
-                            <li>Total <span>₹ {{ $cartTotal }}</span></li>
+                            <li>Shipping Charges <span> @if($cartTotal < 799)₹ 80 @else FREE @endif</span></li>
+                            <li>Total <span>₹ @if($cartTotal < 799)  {{ $cartTotal + 80 }} @else {{ $cartTotal }} @endif</span></li>
                         </ul>
                         <a href="{{ url('checkout') }}" class="primary-btn">Proceed to checkout</a>
                     </div>

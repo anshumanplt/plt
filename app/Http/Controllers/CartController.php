@@ -56,6 +56,7 @@ class CartController extends Controller
             } else {
                 $guestCart[$productId] = [
                     // 'quantity' => $request->input('quantity', 1),
+                    'productId' => $productId,
                     'quantity' => $quantity,
                     'sku' => $sku
                 ];
@@ -119,9 +120,13 @@ class CartController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             $cartData = Cart::where('user_id', $user->id)->get();
+
+            // echo "<pre>"; print_r($cartData); echo "</pre>";
+
             foreach ($cartData as $key => $value) {
                 $product = Product::where('id', $value->product_id)->with('images')->first();
                 $product->quantity = $value->quantity;
+                $product->sku = $value->sku;
                 $cartItems[] = $product;
             }
             // ->with('product.images')
@@ -129,15 +134,25 @@ class CartController extends Controller
             // Fetch guest cart items using session data
             $guestCart = session('guest_cart', []);
 
-            // Fetch the product details for the cart items
-            $productIds = array_keys($guestCart);
-            $products = Product::whereIn('id', $productIds)->with('images')->get();
-
-            // Associate quantities with product images
-            foreach ($products as $product) {
-                $product->quantity = $guestCart[$product->id]['quantity'];
+            foreach($guestCart as $value) {
+                $product = Product::where('id', $value['productId'])->with('images')->first();
+                $product->quantity = $value['quantity'];
+                $product->sku = $value['sku'];
                 $cartItems[] = $product;
+                // echo "<pre>"; print_r($value); die("check");
             }
+
+            // echo "<pre>"; print_r($guestCart); die("check");
+
+            // Fetch the product details for the cart items
+            // $productIds = array_keys($guestCart);
+            // $products = Product::whereIn('id', $productIds)->with('images')->get();
+
+            // // Associate quantities with product images
+            // foreach ($products as $product) {
+            //     $product->quantity = $guestCart[$product->id]['quantity'];
+            //     $cartItems[] = $product;
+            // }
         }
 
         // echo "<pre>"; print_r($cartItems); die("check");
@@ -155,6 +170,8 @@ class CartController extends Controller
 
 
         $categories= $allMenu;
+
+
 
         return view('cart.index', compact('cartItems', 'categories'));
     }

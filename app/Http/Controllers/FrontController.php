@@ -32,6 +32,7 @@ class FrontController extends Controller
         // 2. Retrieve 5 categories with images
         $categoriesWithImages = Category::take(5)->get();
         $data['categoriesWithImages'] = $categoriesWithImages;
+        // echo "<pre>"; print_r($categoriesWithImages[0]->category_id); die("check");
 
         // 3. Retrieve top five products with 8 products
         $topFiveProducts = Product::has('images')->with('images')->with('productImages')->orderBy('id')->take(5)->get();
@@ -106,6 +107,7 @@ class FrontController extends Controller
         $allSelectedAttribute = ProductAttribute::where('product_id', $product)->get();
 
         $categories = $allMenu;
+        $productId = $product;
 
         $product = Product::where('id', $product)->with('productImages')->first();
 
@@ -179,11 +181,138 @@ class FrontController extends Controller
                 'productSku' => $productSku,
                 'productSKUImages' => $productSKUImages
             ];
+        }else{
+            $checkAtt = ProductAttribute::where('product_id', $productId)->first();
+            if($checkAtt) {
+                $attArr = explode(',', $checkAtt->attribute_value_id);
+                return redirect('product-detail/'.$productId.'?Size='.$attArr[0].'&Color='.$attArr[1].'&Fabric='.$attArr[2]);
+                
+            }
         }
+
 
         
 
         return view('product_detail', compact('product', 'categories', 'relatedProduct', 'allAttribute', 'allSelectedAttribute', 'allArray', 'variantData', 'allSelectedAttributevalue'));
     }
 
+    public function aboutus() {
+       
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+        $categories = $allMenu;
+        return view('static.aboutus', compact('categories'));
+    }
+
+    public function contactus() {
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+        $categories = $allMenu;
+        return view('static.contactus', compact('categories'));
+    }
+
+    public function privacypolicy() {
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+        $categories = $allMenu;
+        return view('static.privacypolicy', compact('categories'));
+    }
+    public function termscondition() {
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+        $categories = $allMenu;
+        return view('static.termscondition', compact('categories'));
+    }
+    public function shippingpolicy() {
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+        $categories = $allMenu;
+        return view('static.shippingpolicy', compact('categories'));
+    }
+    public function paymentpolicy() {
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+        $categories = $allMenu;
+        return view('static.contactus', compact('categories'));
+    }
+    public function disputeresolution() {
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+        $categories = $allMenu;
+        return view('static.disputeresolution', compact('categories'));
+    }
+    public function genuinequalityproduct() {
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+        $categories = $allMenu;
+        return view('static.contactus', compact('categories'));
+    }
+
+    public function notifyme(Request $request) {
+        return redirect()->back()->with('success', 'We will notify you.');
+    }
 }

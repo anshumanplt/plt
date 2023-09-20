@@ -45,25 +45,7 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
-    protected function authenticated(Request $request, $user)
-    {
-        // Get guest cart items from session
-        $guestCart = session('guest_cart', []);
 
-        // Loop through guest cart items and sync with user's cart
-        foreach ($guestCart as $productId => $item) {
-            $user->carts()->updateOrCreate(
-                ['product_id' => $productId],
-                ['sku' => $item['sku']],
-                ['quantity' => $item['quantity']]
-            );
-        }
-
-        // Clear guest cart from session
-        session()->forget('guest_cart');
-
-        return redirect()->intended($this->redirectPath());
-    }
 
     public function showRegistrationForm()
     {
@@ -82,6 +64,27 @@ class RegisterController extends Controller
         return view('auth.register',compact('categories'));
     }
 
+    protected function authenticated(Request $request, $user)
+    {
+        // Log::info('User authenticated');
+        // Get guest cart items from session
+        $guestCart = session('guest_cart', []);
+
+        // echo "<pre>"; print_r($guestCart); die("check");
+
+        // Loop through guest cart items and sync with user's cart
+        foreach ($guestCart as $productId => $item) {
+            $user->carts()->updateOrCreate(
+                ['product_id' => $productId],
+                ['sku' => $item['sku'], 'quantity' => $item['quantity']]
+            );
+        }
+
+        // Clear guest cart from session
+        session()->forget('guest_cart');
+
+        return redirect()->intended($this->redirectPath());
+    }
 
     /**
      * Get a validator for an incoming registration request.

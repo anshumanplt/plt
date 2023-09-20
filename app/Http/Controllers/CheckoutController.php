@@ -33,7 +33,6 @@ class CheckoutController extends Controller
         }
 
 
-
         $categories = $allMenu;
 
         $countries = Country::get();
@@ -82,9 +81,9 @@ class CheckoutController extends Controller
         return redirect()->route('checkout.index')->with('success', 'Address added successfully.');
     }
 
-    public function setDefaultAddress(Request $request, $id)
+    public function setDefaultAddress(Request $request )
     {
-        $address = Address::findOrFail($id);
+        $address = Address::findOrFail($request->input('addressid'));
 
         // Mark the selected address as default for the user
         Address::where('user_id', auth()->id())->update(['is_default' => false]);

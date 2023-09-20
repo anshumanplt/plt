@@ -9,6 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Prettylovingthing</title>
 
+    <meta name="googlebot" content="noindex">
+<meta name="googlebot-news" content="nosnippet">
+
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
@@ -266,24 +269,26 @@
             </div>
             <div class="col-lg-2 col-md-3 col-sm-5">
                 <div class="footer__widget">
-                    <h6>Quick links</h6>
+                    <h6>Support</h6>
                     <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Blogs</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">FAQ</a></li>
+                        <li><a href="{{ route('aboutus') }}">About</a></li>
+                        {{-- <li><a href="#">Blogs</a></li> --}}
+                        <li><a href="{{ route('contactus') }}">Contact</a></li>
+                        {{-- <li><a href="#">FAQ</a></li> --}}
                     </ul>
                 </div>
             </div>
             <div class="col-lg-2 col-md-3 col-sm-4">
                 <div class="footer__widget">
-                    <h6>Account</h6>
-                    <ul>
-                        <li><a href="#">My Account</a></li>
-                        <li><a href="#">Orders Tracking</a></li>
-                        <li><a href="#">Checkout</a></li>
-                        <li><a href="#">Wishlist</a></li>
-                    </ul>
+                    <h6>Company</h6>
+                    <ul id="menu-about" class="">
+                        <li><a href="{{ route('privacypolicy') }}">Privacy Policy</a></li> 
+                        <li><a href="{{ route('termscondition') }}">Terms &amp; Conditions</a></li> 
+                        <li><a href="{{ route('shippingpolicy') }}">Shipping Policy</a></li> 
+                        {{-- <li><a href="{{ route('paymentpolicy') }}">Payment Policy</a></li>  --}}
+                        <li><a href="{{ route('disputeresolution') }}">Dispute Resolution</a></li> 
+                        {{-- <li><a href="{{ route('genuinequalityproduct') }}">Genuine Quality product</a></li>  --}}
+                      </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-8 col-sm-8">
@@ -294,11 +299,11 @@
                         <button type="submit" class="site-btn">Subscribe</button>
                     </form>
                     <div class="footer__social">
-                        <a href="#"><i class="fa fa-facebook"></i></a>
-                        <a href="#"><i class="fa fa-twitter"></i></a>
-                        <a href="#"><i class="fa fa-youtube-play"></i></a>
-                        <a href="#"><i class="fa fa-instagram"></i></a>
-                        <a href="#"><i class="fa fa-pinterest"></i></a>
+                        {{-- <a href="#"><i class="fa fa-facebook"></i></a> --}}
+                        <a href="https://twitter.com/i/flow/login?redirect_after_login=%2FThingLoving" target="_blank"><i class="fa fa-twitter"></i></a>
+                        <a href="https://www.youtube.com/channel/UCBm6Ma7ePjijiZhysvwB5aw"><i class="fa fa-youtube-play"></i></a>
+                        <a href="https://www.instagram.com/prettylovingthing/"><i class="fa fa-instagram"></i></a>
+                        <a href="https://in.pinterest.com/PrettyLovingThing/_created/"><i class="fa fa-pinterest"></i></a>
                     </div>
                 </div>
             </div>
@@ -307,7 +312,7 @@
             <div class="col-lg-12">
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                 <div class="footer__copyright__text">
-                    <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved <a href="https://prettylovingthing.com" target="_blank">Prettylovingthing</a></p>
+                    <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved <a href="{{ url('/') }}" target="_blank">Prettylovingthing</a></p>
                 </div>
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
             </div>
@@ -362,7 +367,7 @@
             var countryId = $(this).val();
 
             $.ajax({
-                url: '/get-states/' + countryId,
+                url: "{{ url('get-states')}}/" + countryId,
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {

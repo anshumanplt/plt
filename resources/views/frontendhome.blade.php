@@ -14,7 +14,7 @@
                             <h1>{{ $categoriesWithImages[0]->name }}</h1>
                             {{-- <p>Sitamet, consectetur adipiscing elit, sed do eiusmod tempor incidid-unt labore
                             edolore magna aliquapendisse ultrices gravida.</p> --}}
-                            <a href="#">Shop now</a>
+                            <a href="{{ url('category') }}/{{ $categoriesWithImages[0]->category_id }}">Shop now</a>
                         </div>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                                 <div class="categories__text">
                                     <h4>{{ $item->name }}</h4>
                                     {{-- <p>358 items</p> --}}
-                                    <a href="#">Shop now</a>
+                                    <a href="{{ url('category') }}/{{ $item->category_id }}">Shop now</a>
                                 </div>
                             </div>
                         </div>    

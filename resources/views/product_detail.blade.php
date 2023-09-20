@@ -102,7 +102,21 @@
                             @if(count($variantData) > 0) 
                                 <a href="{{ url('/cart/add') }}/{{ $product->id }}@if(count($variantData) > 0)/{{ $variantData['productSku']->sku }} @endif"   class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
                             @else
-                            <a href="javascript:void(0)" onclick="alert('Please select product variant.')"  class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+
+                            @if(count($allSelectedAttributevalue) > 0)
+                                <a href="javascript:void(0)" onclick="alert('Please select product variant.')"  class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                                @else
+                                <form method="POST" action="{{ route('notifyme') }}">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="">Email:</label>
+                                        <input type="text" placeholder="Email" required class="form-control" name="email" >
+                                    </div>
+                                    <button type="submit" class="cart-btn">Notify Me</button>
+
+                                </form>
+
+                            @endif
 
                             @endif
                             <ul>
@@ -127,63 +141,33 @@
                             </ul>
                         </div>
                         <div class="product__details__widget">
-                            <form action="{{ url('/product-detail') }}/{{ $product->id }}" method="get">
-                                @csrf
-                                @foreach ($allAttribute as $key => $item)
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <span>{{ $item->name }}:</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <div class="stock__checkbox">
-                                                @foreach($item->attributeValues as $value) 
-                                                    @if(in_array($value->id, $allSelectedAttributevalue))
-                                                        <label for="">
-                                                            <label for="">{{ $value->value }}</label>   
-                                                            <input type="radio" name="{{ $item->name }}" @if( request()->get($item->name) )  @if($value->id == request()->get($item->name)) checked @endif @endif value="{{ $value->id }}" id="">
-                                                            <span class="checkmark"></span>
-                                                        </label>
-                                                    @endif
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                                <button type="submit">Submit Variants</button>
-                            </form>
-                            
-                            <form action="{{ url('/product-detail') }}/{{ $product->id }}" method="get" style="display: none;">
-                                @csrf
-                                @foreach ($allAttribute as $key => $item)
-                          
+                            @if(count($allSelectedAttributevalue) > 0)
+                                <form action="{{ url('/product-detail') }}/{{ $product->id }}" method="get">
+                                    @csrf
+                                    @foreach ($allAttribute as $key => $item)
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <span>{{ $item->name }}:</span>
                                             </div>
                                             <div class="col-sm-8">
                                                 <div class="stock__checkbox">
-                                                
-                                                    @foreach($allArray as $key1 => $value)
-                                                        @if($value['attribute_id'] == $item->id) 
-                                                        <label for="">
-                                                            <label for="">{{ $value['value'] }}</label>   
-                                                            <input type="radio" name="{{ $item->name }}" value="{{ $value['id'] }}" id="">
-                                                            <span class="checkmark"></span>
-                                                        </label>
+                                                    @foreach($item->attributeValues as $value) 
+                                                        @if(in_array($value->id, $allSelectedAttributevalue))
+                                                            <label for="">
+                                                                <label for="">{{ $value->value }}</label>   
+                                                                <input type="radio" name="{{ $item->name }}" @if( request()->get($item->name) )  @if($value->id == request()->get($item->name)) checked @endif @endif value="{{ $value->id }}" id="">
+                                                                <span class="checkmark"></span>
+                                                            </label>
                                                         @endif
-
                                                     @endforeach
-                                                    
-                                                    
-
                                                 </div>
-                                                
                                             </div>
                                         </div>
-                                        
-                                @endforeach
-                                <button type="submit">Submit Variants</button>
-                            </form>
+                                    @endforeach
+                                    <button type="submit">Submit Variants</button>
+                                </form>
+                            @endif
+                           
 
                              
                              
@@ -195,7 +179,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-12">
+                <div class="col-lg-12" style="display: none;">
                     <div class="product__details__tab">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
@@ -226,51 +210,63 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="padding-top: 10%;">
                 <div class="col-lg-12 text-center">
                     <div class="related__title">
                         <h5>RELATED PRODUCTS</h5>
                     </div>
                 </div>
+                @php 
+                    $productCount = 0;
+                @endphp
                 @foreach ($relatedProduct as $item)
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="@if(count($item->productImages) > 0){{ asset('../storage/app/public/'.$item->productImages[0]->image_path) }} @endif">
-                            <div class="label new">New</div>
-                            <ul class="product__hover">
-                                <li><a href="@if(count($item->productImages) > 0){{ asset('../storage/app/public/'.$item->productImages[0]->image_path) }} @endif" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                @if(Auth::check())
-                                    @php 
-                                        $wishlist = \App\Models\Wishlist::where(['user_id' => Auth::user()->id, 'product_id' => $item->id])->first();
-                                        
-                                    @endphp
-                                        @if($wishlist) 
-                                            <li><a href="{{ route('wishlist.remove', $wishlist->id) }}"><span class="icon_heart_alt" style="color: red;"></span></a></li>
-                                            @else
-                                            <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
-                                        @endif
+                @if(count($item->productImages) > 0)
+                    @php 
+                        ++$productCount ;
+                    @endphp
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg" data-setbg="@if(count($item->productImages) > 0){{ asset('../storage/app/public/'.$item->productImages[0]->image_path) }} @endif"> 
+                                <div class="label new">New</div>
+                                <ul class="product__hover">
+                                    <li><a href="@if(count($item->productImages) > 0){{ asset('../storage/app/public/'.$item->productImages[0]->image_path) }} @endif" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                    @if(Auth::check())
+                                        @php 
+                                            $wishlist = \App\Models\Wishlist::where(['user_id' => Auth::user()->id, 'product_id' => $item->id])->first();
+                                            
+                                        @endphp
+                                            @if($wishlist) 
+                                                <li><a href="{{ route('wishlist.remove', $wishlist->id) }}"><span class="icon_heart_alt" style="color: red;"></span></a></li>
+                                                @else
+                                                <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
+                                            @endif
 
-                                    @else
-                                        <li><a href="{{ url('/wishlist/add') }}/{{ $item->id }}"><span class="icon_heart_alt"></span></a></li>
-                                @endif
-                            </ul>
-                        </div>
-                        <div class="product__item__text">
-                            <h6><a href="{{ url('/product-detail') }}/{{ $item->id }}">{{ $item->name }}</a></h6>
-                            <div class="rating">
-                                {{-- <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i> --}}
+                                        @else
+                                            <li><a href="{{ url('/wishlist/add') }}/{{ $item->id }}"><span class="icon_heart_alt"></span></a></li>
+                                    @endif
+                                </ul>
                             </div>
-                            <div class="product__price">₹ {{ $item->sale_price }}<span>₹ {{ $item->price }}</div>
+                            <div class="product__item__text">
+                                <h6><a href="{{ url('/product-detail') }}/{{ $item->id }}">{{ $item->name }}</a></h6>
+                                <div class="rating">
+                                    {{-- <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i> --}}
+                                </div>
+                                <div class="product__price">₹ {{ $item->sale_price }}<span>₹ {{ $item->price }}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                @endif
                 @endforeach
-                
-            
+                @if($productCount == 0) 
+                <div class="col-lg-12 text-center">
+                    <center>No related product availble.</center>
+                </div>
+                    @endif
             </div>
         </div>
     </section>

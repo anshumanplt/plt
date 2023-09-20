@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-8" style="padding: 10%;">
                 <div class="card">
                     <div class="card-header">Make a Payment</div>
 
@@ -20,8 +20,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="amount">Amount (in INR)</label>
-                                <input type="number" name="amount" id="amount" value="{{ $orderAmount }}" class="form-control" required>
+                                <label for="amount">Amount (in INR) <?php echo $orderAmount/100; ?></label>
+
+                                <input type="hidden" name="amount" id="amount" value="{{ $orderAmount }}" class="form-control" required>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Pay Now</button>

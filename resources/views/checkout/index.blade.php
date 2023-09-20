@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__links">
-                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <a href="{{ url('/') }}"><i class="fa fa-home"></i> Home</a>
                         <span>Shopping cart</span>
                     </div>
                 </div>
@@ -15,6 +15,7 @@
         </div>
     </div>
     <!-- Breadcrumb End -->
+
 
     <!-- Checkout Section Begin -->
     <section class="checkout spad">
@@ -29,10 +30,32 @@
         @if (!$addresses->isEmpty())
         <h3>Selected Address</h3>
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-lg-12">
+                <form action="{{ route('addresses.set-default') }}" method="post">
+                    @csrf
+                    <div class="form-group">
+                        <label></label>
+                            <select class="form-control" name="addressid">
+                                @foreach($addresses as $address)
+                                @php 
+                                    $cityData = App\Models\City::where('id', $address->city)->first();
+                                    $stateData = App\Models\State::where('id', $address->state)->first();
+                                    $countryData = App\Models\Country::where('id',$address->country)->first();
+
+                                    // echo $cityData->name;
+                                @endphp
+                                    <option value="{{ $address->id }}" @if($address->is_default) selected @endif>Address: {{ $address->address1 }}, Address2: {{ $address->address2 }}, Mobile: {{ $address->mobile }}, PIN: {{ $address->pin }}, City: {{ $cityData->name }}, State: {{ $stateData->name }}, Country: {{ $countryData->name }}</option>
+                                @endforeach
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Set as Default</button>
+                    </div>
+                </form>
+
             @foreach ($addresses as $address)
-            <div class="card col-sm-4" style="float: right">
-                <div class="card-body">
+            <div class="col-lg-4" style="display:none;">
+                <div class="card-body ">
                     <table class="table-borderless">
                         <tr>
                             <td><b>Address1:</b></td>
@@ -179,9 +202,24 @@
                                         $cartTotal = 0;  
                                     @endphp
                                     @foreach($cartItems as $key => $cartItem)
-                                    <li>{{ $key + 1 }}. {{ $cartItem->product->name }} <span>₹ {{ $cartItem->product->sale_price }} * {{ $cartItem->quantity }}</span></li>
+
+                                    @if($cartItem->sku) 
+                                        @php
+                                            $getPrice = \App\Models\ProductAttribute::where('sku', $cartItem->sku)->first();
+                                            $getAttributeImage = \App\Models\ProductAttributeImage::where('sku', $cartItem->sku)->first();
+                                        //    echo '₹ '.$getPrice->price;
+                                            $finalPrice =  $getPrice->price;
+                                        @endphp
+                                    @else
+                                        @php 
+                                            $finalPrice =  $cartItem->product->sale_price;
+                                        @endphp
+
+                                    @endif 
+
+                                    <li>{{ $key + 1 }}. {{ $cartItem->product->name }} <span>₹ {{ $finalPrice }} * {{ $cartItem->quantity }}</span></li>
                                     <?php
-                                        $cartTotal += $cartItem->product->sale_price * $cartItem->quantity; // Update cart total
+                                        $cartTotal += $finalPrice * $cartItem->quantity; // Update cart total
                                     ?>
                                     @endforeach
 
@@ -190,7 +228,10 @@
                             <div class="checkout__order__total">
                                 <ul>
                                     <li>Subtotal <span>₹ {{ $cartTotal }}</span></li>
-                                    <li>Total <span>₹ {{ $cartTotal }}</span></li>
+                                    <li>Shipping Charges <span> @if($cartTotal < 799)₹ 80 @else FREE @endif</span></li>
+                                    <li>Total <span>₹ @if($cartTotal < 799)  {{ $cartTotal + 80 }} @else {{ $cartTotal }} @endif</span></li>
+                                    
+                          
                                 </ul>
                             </div>
                             <form action="{{ route('orders.place-order') }}" method="POST">

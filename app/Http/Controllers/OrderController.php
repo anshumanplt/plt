@@ -44,6 +44,54 @@ class OrderController extends Controller
         return view('orders.index', compact('orders', 'categories'));
     }
 
+    public function getallorders() {
+   
+    
+        // Fetch the user's orders along with related address information
+        $orders = Order::with('address')
+                  
+                       ->orderBy('created_at', 'desc')
+                       ->paginate(15);
+
+    
+        return view('admin.orders.index', compact('orders'));
+    }
+
+    public function showadmin(Order $order) {
+        $order->load('orderItems','orderItems.product');
+        return view('admin.orders.show', compact('order'));
+    }
+
+    public function makeshippingorder() {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_URL             => "https://pre-alpha.ithinklogistics.com/api_v3/order/add.json",
+          CURLOPT_RETURNTRANSFER  => true,
+          CURLOPT_ENCODING        => "",
+          CURLOPT_MAXREDIRS       => 10,
+          CURLOPT_TIMEOUT         => 30,
+          CURLOPT_HTTP_VERSION    => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST   => "POST",
+          CURLOPT_POSTFIELDS      => "{\"data\":{\"shipments\":[{\"waybill\":\"\",\"order\":\"GK0034\",\"sub_order\":\"\",\"order_date\":\"31-01-2018\",\"total_amount\":\"999\",\"name\":\"Bharat\",\"company_name\":\"ABC Company\",\"add\":\"104 Shreeji\",\"add2\":\"\",\"add3\":\"\",\"pin\":\"400067\",\"city\":\"Mumbai\",\"state\":\"Maharashtra\",\"country\":\"India\",\"phone\":\"9876543210\",\"alt_phone\":\"9876542210\",\"email\":\"abc@gmail.com\",\"is_billing_same_as_shipping\":\"no\",\"billing_name\":\"Bharat\",\"billing_company_name\":\"ABC Company\",\"billing_add\":\"104, Shreeji Sharan\",\"billing_add2\":\"\",\"billing_add3\":\"\",\"billing_pin\":\"400067\",\"billing_city\":\"Mumbai\",\"billing_state\":\"Maharashtra\",\"billing_country\":\"India\",\"billing_phone\":\"9876543210\",\"billing_alt_phone\":\"9876543211\",\"billing_email\":\"abc@gmail.com\",\"products\":[{\"product_name\":\"Green color tshirt\",\"product_sku\":\"GC001-1\",\"product_quantity\":\"1\",\"product_price\":\"100\",\"product_tax_rate\":\"5\",\"product_hsn_code\":\"91308\",\"product_discount\":\"0\"},{\"product_name\":\"Red color tshirt\",\"product_sku\":\"GC002-2\",\"product_quantity\":\"1\",\"product_price\":\"200\",\"product_tax_rate\":\"5\",\"product_hsn_code\":\"91308\",\"product_discount\":\"0\"}],\"shipment_length\":\"10\",\"shipment_width\":\"10\",\"shipment_height\":\"5\",\"weight\":\"400.00\",\"shipping_charges\":\"0\",\"giftwrap_charges\":\"0\",\"transaction_charges\":\"0\",\"total_discount\":\"0\",\"first_attemp_discount\":\"0\",\"cod_amount\":\"550\",\"payment_mode\":\"COD\",\"reseller_name\":\"\",\"eway_bill_number\":\"\",\"gst_number\":\"\",\"return_address_id\":\"24\"}],\"pickup_address_id\":\"24\",\"access_token\":\"42e4c8c60fc4f6d43f1d36bbda354099\",\"secret_key\":\"b89f61a8b88b43a7fb8ab3b151359978\",\"logistics\":\"fedex\",\"s_type\":\"ground\",\"order_type\":\"\"}}",
+          CURLOPT_HTTPHEADER      => array(
+              "cache-control: no-cache",
+              "content-type: application/json"
+          )
+        ));
+    
+        $response = curl_exec($curl);
+        $err      = curl_error($curl);
+        curl_close($curl);
+        if ($err) 
+        {
+          echo "cURL Error #:" . $err;
+        }
+        else
+        {
+          echo $response;
+        }
+    }
+
     
     public function show(Order $order)
     {   
@@ -77,6 +125,15 @@ class OrderController extends Controller
         return redirect()->route('orders.show', $order->id)->with('error', 'Order cannot be canceled.');
     }
 
+    public function updatestatus(Order $order, Request $request) {
+
+        // echo "<pre>"; print_r($request->all()); die("check");
+
+        $order->update(['order_state' => $request->input('orderstatus')]);
+        return redirect()->route('admin.orders.show', $order->id)->with('success', 'Order has been '.$request->input('orderstatus'));
+
+    }
+
     public function myaccount() {
         
         $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
@@ -106,6 +163,9 @@ class OrderController extends Controller
         DB::beginTransaction();
     
         try {
+
+            // echo "<pre>"; print_r($cartItems); die("check");
+
             $insertData = [
                 'user_id' => $user->id,
                 'address_id' => $defaultAddress->id,
@@ -127,9 +187,11 @@ class OrderController extends Controller
 
             foreach ($cartItems as $cartItem) {
                 $product = Product::findOrFail($cartItem->product_id);
-    
+                $getPrice = \App\Models\ProductAttribute::where('sku', $cartItem->sku)->first();
                 // Calculate subtotal
-                $subtotal = $product->sale_price * $cartItem->quantity;
+                // $subtotal = $product->sale_price * $cartItem->quantity;
+                $subtotal = $getPrice->price * $cartItem->quantity;
+
                
              
                 // Create and store the order item
@@ -137,7 +199,7 @@ class OrderController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'quantity' => $cartItem->quantity,
-                    'unit_price' => $product->sale_price,
+                    'unit_price' => $getPrice->price,
                     'subtotal' => $subtotal,
                 ]);
 
@@ -154,7 +216,11 @@ class OrderController extends Controller
                 // Remove the cart item
                 $cartItem->delete();
             }
-    
+            
+            if($totalAmount < 799) {
+                $totalAmount = $totalAmount + 80;
+            }
+
             // Update the calculated total amount in the order
             $order->update(['total_amount' => $totalAmount]);
            

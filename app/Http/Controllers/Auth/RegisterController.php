@@ -66,17 +66,17 @@ class RegisterController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        // Log::info('User authenticated');
+
         // Get guest cart items from session
         $guestCart = session('guest_cart', []);
 
-        // echo "<pre>"; print_r($guestCart); die("check");
-
+  
         // Loop through guest cart items and sync with user's cart
         foreach ($guestCart as $productId => $item) {
+
             $user->carts()->updateOrCreate(
                 ['product_id' => $productId],
-                ['sku' => $item['sku'], 'quantity' => $item['quantity']]
+                ['quantity' => $item['quantity']]
             );
         }
 

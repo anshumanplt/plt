@@ -2,35 +2,84 @@
 
 @section('content')
 
+{{-- New category section --}}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<section class="categories">
+    <div class="">
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                @foreach($banners as $key => $banner)
+                    <li data-target="#myCarousel" data-slide-to="{{ $key }}" @if($key == 0) class="active" @endif></li>                    
+                @endforeach
+              {{-- <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+              <li data-target="#myCarousel" data-slide-to="1"></li>
+              <li data-target="#myCarousel" data-slide-to="2"></li> --}}
+            </ol>
+        
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                @foreach($banners as $key => $banner)
+                    <div class="item @if($key == 0) active @endif">
+                        @if($banner->url)
+                            <a href="{{ $banner->url }}" target="_blank">
+                                <img src="{{ asset('storage/'.$banner->banner_image) }}" alt="{{ $banner->banner_image }}" style="width:100%;">
+                            </a>
+                        @else 
+                            <img src="{{ asset('storage/'.$banner->banner_image) }}" alt="{{ $banner->banner_image }}" style="width:100%;">
+                        @endif
 
+                    </div>
+                @endforeach    
+              {{-- <div class="item">
+                <img src="{{url('/frontend/img/slider-2.jpeg') }}" alt="Chicago" style="width:100%;">
+              </div>
+            
+              <div class="item">
+                <img src="{{url('/frontend/img/slider-1.jpeg') }}" alt="New york" style="width:100%;">
+              </div> --}}
+            </div>
+        
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+              <span class="glyphicon glyphicon-chevron-left"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+              <span class="glyphicon glyphicon-chevron-right"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+    </div>
+</section>
+
+{{-- End New Category section --}}
 <!-- Categories Section Begin -->
-    <section class="categories">
+    <section class="product spad">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-6 p-0">
-                    <div class="categories__item categories__large__item set-bg"
-                    data-setbg="{{ url('/images/categories/') }}/{{ $categoriesWithImages[0]->image }}">
-                        <div class="categories__text">
-                            <h1>{{ $categoriesWithImages[0]->name }}</h1>
-                            {{-- <p>Sitamet, consectetur adipiscing elit, sed do eiusmod tempor incidid-unt labore
-                            edolore magna aliquapendisse ultrices gravida.</p> --}}
-                            <a href="{{ url('category') }}/{{ $categoriesWithImages[0]->category_id }}">Shop now</a>
-                        </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
+            
+            <div class="col-lg-12">
+                {{-- <div class="section-title">
+                    <h4>All Category</h4>
+                </div> --}}
                 <div class="row">
 
                     @foreach ($categoriesWithImages as $key=> $item)
                     @if($key > 0)
-                        <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                            <div class="categories__item set-bg" data-setbg="{{ url('/images/categories/') }}/{{ $item->image }}">
+                        <div class="col-lg-3 col-md-3 col-sm-3 p-0" style="padding: 1%;">
+                            <a href="{{ url('category') }}/{{ $item->category_id }}">
+                                <img src="{{ url('/images/categories/') }}/{{ $item->image }}" class="img-responsive" alt="">
+                            </a>
+                            {{-- <div class="categories__item set-bg" data-setbg="{{ url('/images/categories/') }}/{{ $item->image }}">
                                 <div class="categories__text">
                                     <h4>{{ $item->name }}</h4>
-                                    {{-- <p>358 items</p> --}}
+                                        <p></p>
                                     <a href="{{ url('category') }}/{{ $item->category_id }}">Shop now</a>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>    
                     @endif                    
                     @endforeach
@@ -82,6 +131,9 @@
             <div class="col-lg-8 col-md-8">
                 <ul class="filter__controls">
                     <li class="active" data-filter="*">All</li>
+                    @foreach($categoryProduct as $value)
+                        <li data-filter=".{{ $value->name }}">{{ $value->name }}</li>
+                    @endforeach
                     {{-- <li data-filter=".women">Women’s</li>
                     <li data-filter=".men">Men’s</li>
                     <li data-filter=".kid">Kid’s</li>
@@ -92,36 +144,39 @@
         </div>
         <div class="row property__gallery">
             @foreach($products as $product)
-                <div class="col-lg-3 col-md-4 col-sm-6 mix women">
+           
+                <div class="col-lg-3 col-md-4 col-sm-6 mix *">
                     <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0) {{ asset('../storage/app/public/'.$product->productImages[0]->image_path) }} @endif">
-                            <div class="label new">New</div>
-                            <ul class="product__hover">
-                                <li><a href="{{ asset('../storage/app/public/'.$product->images[0]->image_path) }}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                {{-- Wishlist Section --}}
-                                @if(Auth::check())
-                                    @php 
-                                        $wishlist = \App\Models\Wishlist::where(['user_id' => Auth::user()->id, 'product_id' => $product->id])->first();
-                                        
-                                    @endphp
-                                        @if($wishlist) 
-                                            <li><a href="{{ route('wishlist.remove', $wishlist->id) }}"><span class="icon_heart_alt" style="color: red;"></span></a></li>
-                                            @else
+              
+                            <div class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0) {{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
+                                <div class="label new">New</div>
+                                <ul class="product__hover">
+                                    <li><a href="{{ asset('storage/'.$product->productImages[0]->image_path) }}" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                    {{-- Wishlist Section --}}
+                                    @if(Auth::check())
+                                        @php 
+                                            $wishlist = \App\Models\Wishlist::where(['user_id' => Auth::user()->id, 'product_id' => $product->id])->first();
+                                            
+                                        @endphp
+                                            @if($wishlist) 
+                                                <li><a href="{{ route('wishlist.remove', $wishlist->id) }}"><span class="icon_heart_alt" style="color: red;"></span></a></li>
+                                                @else
+                                                <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
+                                            @endif
+
+                                        @else
                                             <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
-                                        @endif
+                                    @endif
 
-                                    @else
-                                        <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
-                                @endif
-
-                                {{-- End Wishlist Section --}}
-                                {{-- <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li> --}}
-                                
-                                {{-- <li><a href="javascript:void(0)" class="add-to-cart-btn" data-product-id="{{ $product->id }}"><span class="icon_bag_alt"></span></a></li> --}}
-                                <li><a href="{{ url('/cart/add') }}/{{ $product->id }}"><span class="icon_bag_alt"></span></a></li>
-                                
-                            </ul>
-                        </div>
+                                    {{-- End Wishlist Section --}}
+                                    {{-- <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li> --}}
+                                    
+                                    {{-- <li><a href="javascript:void(0)" class="add-to-cart-btn" data-product-id="{{ $product->id }}"><span class="icon_bag_alt"></span></a></li> --}}
+                                    {{-- <li><a href="{{ url('/cart/add') }}/{{ $product->id }}"><span class="icon_bag_alt"></span></a></li> --}}
+                                    
+                                </ul>
+                            </div>
+                    
                         <div class="product__item__text">
                             <h6><a href="{{ url('/product-detail') }}/{{ $product->id }}">{{ $product->name }}</a></h6>
                             <div class="rating">
@@ -136,163 +191,53 @@
                     </div>
                 </div>
             @endforeach
-            {{-- <div class="col-lg-3 col-md-4 col-sm-6 mix men">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{{ url('/frontend/img/product/product-2.jpg') }}">
-                        <ul class="product__hover">
-                            <li><a href="img/product/product-2.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Flowy striped skirt</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 49.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix accessories">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{{ url('/frontend/img/product/product-3.jpg') }}">
-                        <div class="label stockout">out of stock</div>
-                        <ul class="product__hover">
-                            <li><a href="img/product/product-3.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Cotton T-Shirt</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 59.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix cosmetic">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{{ url('/frontend/img/product/product-4.jpg') }}">
-                        <ul class="product__hover">
-                            <li><a href="img/product/product-4.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Slim striped pocket shirt</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 59.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix kid">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{{ url('/frontend/img/product/product-5.jpg') }}">
-                        <ul class="product__hover">
-                            <li><a href="img/product/product-5.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Fit micro corduroy shirt</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 59.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women men kid accessories cosmetic">
-                <div class="product__item sale">
-                    <div class="product__item__pic set-bg" data-setbg="{{ url('/frontend/img/product/product-6.jpg') }}">
-                        <div class="label sale">Sale</div>
-                        <ul class="product__hover">
-                            <li><a href="img/product/product-6.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Tropical Kimono</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 49.0 <span>$ 59.0</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women men kid accessories cosmetic">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{{ url('/frontend/img/product/product-7.jpg') }}">
-                        <ul class="product__hover">
-                            <li><a href="img/product/product-7.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Contrasting sunglasses</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 59.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women men kid accessories cosmetic">
-                <div class="product__item sale">
-                    <div class="product__item__pic set-bg" data-setbg="{{ url('/frontend/img/product/product-8.jpg') }}">
-                        <div class="label">Sale</div>
-                        <ul class="product__hover">
-                            <li><a href="img/product/product-8.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Water resistant backpack</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 49.0 <span>$ 59.0</span></div>
-                    </div>
-                </div>
-            </div> --}}
+
+            @foreach($categoryProduct as $value)
+                 
+                    @foreach($value->products as $product)
+                        @if(count($product->productImages) > 0)
+                            <div class="col-lg-3 col-md-4 col-sm-6 mix {{ $value->name }}">
+                                <div class="product__item">
+                 
+                                        <div class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0) {{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
+                                            <div class="label new">New</div>
+                                            <ul class="product__hover">
+                                                <li><a href="{{ asset('storage/'.$product->productImages[0]->image_path) }}" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                                {{-- Wishlist Section --}}
+                                                @if(Auth::check())
+                                                    @php 
+                                                        $wishlist = \App\Models\Wishlist::where(['user_id' => Auth::user()->id, 'product_id' => $product->id])->first();
+                                                        
+                                                    @endphp
+                                                        @if($wishlist) 
+                                                            <li><a href="{{ route('wishlist.remove', $wishlist->id) }}"><span class="icon_heart_alt" style="color: red;"></span></a></li>
+                                                            @else
+                                                            <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
+                                                        @endif
+
+                                                    @else
+                                                        <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
+                                                @endif
+
+                                                
+                                            </ul>
+                                        </div>
+                              
+                                    <div class="product__item__text">
+                                        <h6><a href="{{ url('/product-detail') }}/{{ $product->id }}">{{ $product->name }}</a></h6>
+                                        <div class="rating">
+                                
+                                        </div>
+                                        <div class="product__price">₹ {{ $product->sale_price }}<span>₹ {{ $product->price }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        @endif
+                    @endforeach
+                
+            @endforeach
+      
         </div>
     </div>
 </section>
@@ -344,7 +289,7 @@
                     @foreach($hotTrendsProducts as $product)
                         <div class="trend__item">
                             <div class="trend__item__pic">
-                                <img src="{{ asset('../storage/app/public/'.$product->productImages[0]->image_path) }}" alt="" height="50" width="50">
+                                <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt="" height="50" width="50">
                             </div> 
                             <div class="trend__item__text">
                                 <h6>{{ $product->name }}</h6>
@@ -401,7 +346,7 @@
                     @foreach($bestsellerProducts as $product)
                         <div class="trend__item">
                             <div class="trend__item__pic">
-                                <img src="{{ asset('../storage/app/public/'.$product->productImages[0]->image_path) }}" alt=""  height="50" width="50">
+                                <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt=""  height="50" width="50">
                             </div>
                             <div class="trend__item__text">
                                 <h6>{{ $product->name }}</h6>
@@ -427,7 +372,7 @@
                     @foreach($featureProducts as $product)
                     <div class="trend__item">
                         <div class="trend__item__pic">
-                            <img src="{{ asset('../storage/app/public/'.$product->productImages[0]->image_path) }}" alt=""  height="50" width="50">
+                            <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt=""  height="50" width="50">
                         </div>
                         <div class="trend__item__text">
                             <h6>{{ $product->name }}</h6>
@@ -462,7 +407,7 @@
                 <div class="discount__text">
                     <div class="discount__text__title">
                         <span>Discount</span>
-                        <h2>Summer 2019</h2>
+                        <h2>Summer {{ date('Y') }}</h2>
                         <h5><span>Sale</span> 50%</h5>
                     </div>
                     <div class="discount__countdown" id="countdown-time">

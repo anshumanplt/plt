@@ -31,6 +31,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\InstagramController;
 
 Route::post('admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
@@ -41,6 +43,11 @@ Route::prefix('admin')->group(function () {
 });
 
 Route::middleware('auth:admin')->group(function () {
+
+    Route::get('products/imports', [ProductController::class, 'importProduct'])->name('products.import');
+    Route::post('products/imports', [ProductController::class, 'getcsvfile'])->name('products.import.upload.csv');
+
+
     // Route::get('dashboard', 'AdminDashboardController@index')->name('admin.dashboard');
     // Add other admin routes that require authentication
 
@@ -101,6 +108,11 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('admin/orders', [OrderController::class, 'getallorders'])->name('allorders');
     Route::get('admin/orders/{order}', [OrderController::class, 'showadmin'])->name('admin.orders.show');
     Route::put('admin/orders/updatestatus/{order}', [OrderController::class, 'updatestatus'])->name('admin.orders.updatestatus');
+
+    Route::get('admin/settings/homepage', [SettingController::class, 'homepage'])->name('admin.settings.homepage');
+    Route::post('admin/settings/homepage/update', [SettingController::class, 'homepageupdate'])->name('admin.settings.homepage.update');
+    Route::post('admin/settings/homepage/add-banner', [SettingController::class, 'addhomepagebanner'])->name('admin.settings.homepage.addbanner');
+    Route::delete('admin/settings/homepage/delete-banner/{id}', [SettingController::class, 'bannerdestroy'])->name('admin.settings.homepage.removebanner');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -201,6 +213,9 @@ Route::get('/shipping-policy', [App\Http\Controllers\FrontController::class, 'sh
 Route::get('/payment-policy', [App\Http\Controllers\FrontController::class, 'paymentpolicy'])->name('paymentpolicy');
 Route::get('/dispute-resolution', [App\Http\Controllers\FrontController::class, 'disputeresolution'])->name('disputeresolution');
 Route::get('/genuine-quality-product', [App\Http\Controllers\FrontController::class, 'genuinequalityproduct'])->name('genuinequalityproduct');
+Route::post('/newsletter', [App\Http\Controllers\FrontController::class, 'newsletter'])->name('newsletter');
+
+Route::get('instagram', [InstagramController::class, 'index']);
 // End Static Pages
 
 Route::get('/category-page', function () {

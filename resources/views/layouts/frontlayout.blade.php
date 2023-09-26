@@ -191,15 +191,17 @@
 
     @yield('content')
 
+
+    @include('partials.instagram')
     <!-- Instagram Begin -->
-<div class="instagram">
+{{-- <div class="instagram">
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-2 col-md-4 col-sm-4 p-0">
                 <div class="instagram__item set-bg" data-setbg="{{ url('/frontend/img/instagram/insta-1.jpg') }}">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ prettylovingthing</a>
                     </div>
                 </div>
             </div>
@@ -207,7 +209,7 @@
                 <div class="instagram__item set-bg" data-setbg="{{ url('/frontend/img/instagram/insta-2.jpg') }}">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ prettylovingthing</a>
                     </div>
                 </div>
             </div>
@@ -215,7 +217,7 @@
                 <div class="instagram__item set-bg" data-setbg="{{ url('/frontend/img/instagram/insta-3.jpg') }}">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ prettylovingthing</a>
                     </div>
                 </div>
             </div>
@@ -223,7 +225,7 @@
                 <div class="instagram__item set-bg" data-setbg="{{ url('/frontend/img/instagram/insta-4.jpg') }}">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ prettylovingthing</a>
                     </div>
                 </div>
             </div>
@@ -231,7 +233,7 @@
                 <div class="instagram__item set-bg" data-setbg="{{ url('/frontend/img/instagram/insta-5.jpg') }}">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ prettylovingthing</a>
                     </div>
                 </div>
             </div>
@@ -239,13 +241,13 @@
                 <div class="instagram__item set-bg" data-setbg="{{ url('/frontend/img/instagram/insta-6.jpg') }}">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ prettylovingthing</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 <!-- Instagram End -->
 
 <!-- Footer Section Begin -->
@@ -259,11 +261,11 @@
                     </div>
                     <p>We are Pretty Loving Thing. The brand behind fashion Freedom.We exist for the love of fashion. We have got all the permimum range of outfits you could ever need in life. from ”designer fashion for women to the latest trends in women’s fashion” From date night dress to ritual colection.</p>
                     <div class="footer__payment">
-                        <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
-                        <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
-                        <a href="#"><img src="img/payment/payment-3.png" alt=""></a>
-                        <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
-                        <a href="#"><img src="img/payment/payment-5.png" alt=""></a>
+                        <a href="javascript:void(0)"><img src="{{ url('/frontend/img/payment/razor.png') }}" height="50" width="50" alt="Razor Pay"></a>
+                        {{-- <a href="#"><img src="{{ url('/frontend/img/payment/payment-2.png') }}" alt=""></a>
+                        <a href="#"><img src="{{ url('/frontend/img/payment/payment-3.png') }}" alt=""></a>
+                        <a href="#"><img src="{{ url('/frontend/img/payment/payment-4.png') }}" alt=""></a>
+                        <a href="#"><img src="{{ url('/frontend/img/payment/payment-5.png') }}" alt=""></a> --}}
                     </div>
                 </div>
             </div>
@@ -294,8 +296,9 @@
             <div class="col-lg-4 col-md-8 col-sm-8">
                 <div class="footer__newslatter">
                     <h6>NEWSLETTER</h6>
-                    <form action="#">
-                        <input type="text" placeholder="Email">
+                    <form action="{{ route('newsletter') }}" method="post">
+                        @csrf
+                        <input type="text" required placeholder="Email">
                         <button type="submit" class="site-btn">Subscribe</button>
                     </form>
                     <div class="footer__social">

@@ -8,6 +8,8 @@ use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\ProductAttribute;
 use App\Models\ProductAttributeImage;
+use App\Models\Setting;
+use App\Models\Banner;
 
 class FrontController extends Controller
 {
@@ -39,20 +41,39 @@ class FrontController extends Controller
         $data['topFiveProducts'] = $topFiveProducts;
 
         // 4. Retrieve hot trends, bestseller, and featured products with 5 products each
-        $hotTrendsProducts = Product::where('hot_trend', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(5)->get();
+        $hotTrendsProducts = Product::where('hot_trend', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
         $data['hotTrendsProducts'] = $hotTrendsProducts;
         // echo "<pre>"; print_r($hotTrendsProducts); die("Check");
 
-        $bestsellerProducts = Product::where('best_seller', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(5)->get();
+        $bestsellerProducts = Product::where('best_seller', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
         $data['bestsellerProducts'] = $bestsellerProducts;
 
-        $featureProducts = Product::where('feature', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(5)->get();
+        $featureProducts = Product::where('feature', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
         $data['featureProducts'] = $featureProducts;
 
-        $products = Product::has('images')->with('images')->with('productImages')->orderBy('id', 'DESC')->paginate(16);
+        $products = Product::has('images')->with('images')->with('productImages')->orderBy('id', 'DESC')->paginate(8);
         $data['products'] = $products;
+        $data['products'] = [];
+
+        $homePageSetting = Setting::where('setting_type', 'home')->first();
+        $categoryProduct = [];
+        if($homePageSetting) {
+            $categoryIds = explode(',',$homePageSetting->category_ids);
+            $categoryProduct = Category::whereIn('category_id', $categoryIds)->with('products', 'products.productImages')->get();
+
+            // echo "<pre>"; print_r($categoryProduct); die("check");
+        }
+
+        $data['categoryProduct'] = $categoryProduct;
 
         // echo "<pre>"; print_r($data); die("check");
+
+        $data['banners'] = Banner::where('status', 1)->orderBy('position', 'asc')->get();
+
+
+        // $data['instagramFeed'] = $response;
+       
+
 
         return view('frontendhome', $data);
     }
@@ -65,7 +86,7 @@ class FrontController extends Controller
         // Retrieve the products for the category
         // $products = $category->products;
 
-        $products = Product::where('category_id', $category->category_id)->orWhere('subcategory_id', $category->category_id)->with('productImages')->orderBy('category_id', 'DESC')->paginate(20);
+        $products = Product::where('category_id', $category->category_id)->orWhere('subcategory_id', $category->category_id)->with('productImages')->orderBy('id', 'DESC')->paginate(20);
         
 
         $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
@@ -314,5 +335,9 @@ class FrontController extends Controller
 
     public function notifyme(Request $request) {
         return redirect()->back()->with('success', 'We will notify you.');
+    }
+
+    public function newsletter(Request $request) {
+        return redirect()->back()->with('success', 'Newsletter is subscribed successfully.');
     }
 }

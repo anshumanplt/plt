@@ -165,17 +165,17 @@
                 <div class="col-lg-9 col-md-9">
                     <div class="row">
                         @foreach($products as $product)
-
+                        @if(count($product->productImages) > 0)
                         <div class="col-lg-4 col-md-6">
                             <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0) {{ asset('../storage/app/public/'.$product->productImages[0]->image_path) }}@endif">
+                                <div class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
                                     <div class="label new">New</div>
                                     <ul class="product__hover">
                                         <li>
                                             <?php 
                                                 if(count($product->productImages) > 0) {
                                                     ?>
-                                                        <a href="{{ asset('../storage/app/public/'.$product->productImages[0]->image_path) }}" class="image-popup"><span class="arrow_expand"></span></a>
+                                                        <a href="{{ asset('storage/'.$product->productImages[0]->image_path) }}" class="image-popup"><span class="arrow_expand"></span></a>
                                                     <?php
                                                 }else{
                                                     ?>
@@ -186,7 +186,7 @@
 
                                         </li>
                                         <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
-                                        <li><a href="{{ url('/cart/add') }}/{{ $product->id }}"><span class="icon_bag_alt"></span></a></li>
+                                        {{-- <li><a href="{{ url('/cart/add') }}/{{ $product->id }}"><span class="icon_bag_alt"></span></a></li> --}}
                                     </ul>
                                 </div>
                                 <div class="product__item__text">
@@ -202,6 +202,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                         @endforeach
                         
                         {{-- <div class="col-lg-4 col-md-6">
@@ -227,7 +228,8 @@
                             </div>
                         </div> --}}
                         <div class="col-lg-12 text-center">
-                            <?php echo $products->render(); ?>
+                            {{ $products->links('pagination::bootstrap-4') }}
+                            <?php //echo $products->render(); ?>
                             {{-- <div class="pagination__option">
                                 <a href="#">1</a>
                                 <a href="#">2</a>

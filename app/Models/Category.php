@@ -15,4 +15,9 @@ class Category extends Model
     {
         return $this->belongsTo(Category::class, 'parent_id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'category_id')->where('status', 1)->orderBy('id', 'asc')->limit(8);
+    }
 }

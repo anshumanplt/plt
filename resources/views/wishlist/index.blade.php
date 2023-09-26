@@ -20,7 +20,7 @@
                     <td>{{ $product->description }}</td>
                     <td>
                         @if ($product->productImages->count() > 0)
-                            <img src="{{ asset('../storage/app/public/'.$product->productImages[0]->image_path) }}" alt="Product Image" style="max-width: 100px;">
+                            <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt="Product Image" style="max-width: 100px;">
                         @else
                             No Image
                         @endif

@@ -30,14 +30,14 @@
                                 @if(count($variantData['productSKUImages']) > 0)
                                     @foreach ($variantData['productSKUImages'] as $key => $item)
                                         <a class="pt active" href="#product-{{$key}}">
-                                            <img src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
+                                            <img src="{{ asset('storage/'.$item->image_path) }}" alt="">
                                         </a>                                
                                     @endforeach
                                 @endif
                             @else
                                 @foreach ($product->productImages as $key => $item)
                                     <a class="pt active" href="#product-{{$key}}">
-                                        <img src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
+                                        <img src="{{ asset('storage/'.$item->image_path) }}" alt="">
                                     </a>                                
                                 @endforeach   
                             @endif 
@@ -47,12 +47,12 @@
                                 @if(count($variantData) > 0)
                                     @if(count($variantData['productSKUImages']) > 0)
                                         @foreach ($variantData['productSKUImages'] as $key => $item)
-                                            <img data-hash="product-{{ $key }}" class="product__big__img" src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
+                                            <img data-hash="product-{{ $key }}" class="product__big__img" src="{{ asset('storage/'.$item->image_path) }}" alt="">
                                         @endforeach   
                                     @endif
                                 @else
                                     @foreach ($product->productImages as $key => $item)
-                                        <img data-hash="product-{{ $key }}" class="product__big__img" src="{{ asset('../storage/app/public/'.$item->image_path) }}" alt="">
+                                        <img data-hash="product-{{ $key }}" class="product__big__img" src="{{ asset('storage/'.$item->image_path) }}" alt="">
                                     @endforeach
                                 @endif
 
@@ -226,10 +226,10 @@
                     @endphp
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="product__item">
-                            <div class="product__item__pic set-bg" data-setbg="@if(count($item->productImages) > 0){{ asset('../storage/app/public/'.$item->productImages[0]->image_path) }} @endif"> 
+                            <div class="product__item__pic set-bg" data-setbg="@if(count($item->productImages) > 0){{ asset('storage/'.$item->productImages[0]->image_path) }} @endif"> 
                                 <div class="label new">New</div>
                                 <ul class="product__hover">
-                                    <li><a href="@if(count($item->productImages) > 0){{ asset('../storage/app/public/'.$item->productImages[0]->image_path) }} @endif" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                    <li><a href="@if(count($item->productImages) > 0){{ asset('storage/'.$item->productImages[0]->image_path) }} @endif" class="image-popup"><span class="arrow_expand"></span></a></li>
                                     @if(Auth::check())
                                         @php 
                                             $wishlist = \App\Models\Wishlist::where(['user_id' => Auth::user()->id, 'product_id' => $item->id])->first();

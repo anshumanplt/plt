@@ -66,10 +66,10 @@
                                     <td class="cart__product__item">
                                         {{-- <img src="{{ url('/frontend/img/shop-cart/cp-1.jpg') }}" alt=""> --}}
                                         @if($getAttributeImage)
-                                            <img src="{{ asset('../storage/app/public/'.$getAttributeImage->image_path) }}" alt="Product Image" width="50"> 
+                                            <img src="{{ asset('storage/'.$getAttributeImage->image_path) }}" alt="Product Image" width="50"> 
                                         @else
                                             @if (count($cartItem->images) > 0)
-                                                <img src="@if(count($cartItem->images) > 0) {{ asset('../storage/app/public/'.$cartItem->images[0]->image_path) }}@endif" alt="Product Image" width="50">
+                                                <img src="@if(count($cartItem->images) > 0) {{ asset('storage/'.$cartItem->images[0]->image_path) }}@endif" alt="Product Image" width="50">
                                             @else
                                                 No Image
                                             @endif

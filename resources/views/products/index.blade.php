@@ -9,7 +9,7 @@
         <h1>Products</h1>
 
         <a href="{{ route('products.create') }}" class="btn btn-primary">Create New Product</a>
-
+        <a href="{{ route('products.import') }}" class="btn btn-primary">Upload Product</a>
         <table class="table">
             <thead>
                 <tr>

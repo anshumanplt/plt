@@ -95,7 +95,7 @@
 
                                     <td class="cart__price">₹ {{ $finalPrice }}</td>
                                     <td class="cart__total">₹ {{ $cartItem->quantity * $finalPrice }}</td>
-                                    <td class="cart__close"> <a href="{{ route('cart.remove', $cartItem->id) }}"><span class="icon_close"></span></a></td>
+                                    <td class="cart__close"> <a href="{{ route('cart.remove', $cartItem->sku) }}"><span class="icon_close"></span></a></td>
                                 </tr>
                                 <?php
                                     $cartTotal += $finalPrice * $cartItem->quantity; // Update cart total

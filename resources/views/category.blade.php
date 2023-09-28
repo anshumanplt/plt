@@ -168,7 +168,8 @@
                         @if(count($product->productImages) > 0)
                         <div class="col-lg-4 col-md-6">
                             <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
+                                <a href="{{ url('/product-detail') }}/{{ $product->id }}"><img height="350" src="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif" alt="{{ $product->name }}"></a>
+                                <div style="display: none;" class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
                                     <div class="label new">New</div>
                                     <ul class="product__hover">
                                         <li>

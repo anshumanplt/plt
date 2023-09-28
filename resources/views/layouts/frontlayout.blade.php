@@ -257,7 +257,7 @@
             <div class="col-lg-4 col-md-6 col-sm-7">
                 <div class="footer__about">
                     <div class="footer__logo">
-                        <a href="{{ url('/') }}"><img src="img/logo.png" alt=""></a>
+                        <a href="{{ url('/') }}"><img src="{{ url('/frontend/img/1657366295logo.png') }}" alt=""></a>
                     </div>
                     <p>We are Pretty Loving Thing. The brand behind fashion Freedom.We exist for the love of fashion. We have got all the permimum range of outfits you could ever need in life. from ”designer fashion for women to the latest trends in women’s fashion” From date night dress to ritual colection.</p>
                     <div class="footer__payment">

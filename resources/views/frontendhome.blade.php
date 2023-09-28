@@ -73,45 +73,13 @@
                             <a href="{{ url('category') }}/{{ $item->category_id }}">
                                 <img src="{{ url('/images/categories/') }}/{{ $item->image }}" class="img-responsive" alt="">
                             </a>
-                            {{-- <div class="categories__item set-bg" data-setbg="{{ url('/images/categories/') }}/{{ $item->image }}">
-                                <div class="categories__text">
-                                    <h4>{{ $item->name }}</h4>
-                                        <p></p>
-                                    <a href="{{ url('category') }}/{{ $item->category_id }}">Shop now</a>
-                                </div>
-                            </div> --}}
+                        
                         </div>    
                     @endif                    
                     @endforeach
 
 
-                    {{-- <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="{{ url('/frontend/img/categories/category-3.jpg') }}">
-                            <div class="categories__text">
-                                <h4>Kid’s fashion</h4>
-                                <p>273 items</p>
-                                <a href="#">Shop now</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="{{ url('/frontend/img/categories/category-4.jpg') }}">
-                            <div class="categories__text">
-                                <h4>Cosmetics</h4>
-                                <p>159 items</p>
-                                <a href="#">Shop now</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
-                        <div class="categories__item set-bg" data-setbg="{{ url('/frontend/img/categories/category-5.jpg') }}">
-                            <div class="categories__text">
-                                <h4>Accessories</h4>
-                                <p>792 items</p>
-                                <a href="#">Shop now</a>
-                            </div>
-                        </div>
-                    </div> --}}
+                   
                 </div>
             </div>
         </div>
@@ -143,54 +111,8 @@
             </div>
         </div>
         <div class="row property__gallery">
-            @foreach($products as $product)
+            
            
-                <div class="col-lg-3 col-md-4 col-sm-6 mix *">
-                    <div class="product__item">
-              
-                            <div class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0) {{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
-                                <div class="label new">New</div>
-                                <ul class="product__hover">
-                                    <li><a href="{{ asset('storage/'.$product->productImages[0]->image_path) }}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                    {{-- Wishlist Section --}}
-                                    @if(Auth::check())
-                                        @php 
-                                            $wishlist = \App\Models\Wishlist::where(['user_id' => Auth::user()->id, 'product_id' => $product->id])->first();
-                                            
-                                        @endphp
-                                            @if($wishlist) 
-                                                <li><a href="{{ route('wishlist.remove', $wishlist->id) }}"><span class="icon_heart_alt" style="color: red;"></span></a></li>
-                                                @else
-                                                <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
-                                            @endif
-
-                                        @else
-                                            <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li>
-                                    @endif
-
-                                    {{-- End Wishlist Section --}}
-                                    {{-- <li><a href="{{ url('/wishlist/add') }}/{{ $product->id }}"><span class="icon_heart_alt"></span></a></li> --}}
-                                    
-                                    {{-- <li><a href="javascript:void(0)" class="add-to-cart-btn" data-product-id="{{ $product->id }}"><span class="icon_bag_alt"></span></a></li> --}}
-                                    {{-- <li><a href="{{ url('/cart/add') }}/{{ $product->id }}"><span class="icon_bag_alt"></span></a></li> --}}
-                                    
-                                </ul>
-                            </div>
-                    
-                        <div class="product__item__text">
-                            <h6><a href="{{ url('/product-detail') }}/{{ $product->id }}">{{ $product->name }}</a></h6>
-                            <div class="rating">
-                                {{-- <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i> --}}
-                            </div>
-                            <div class="product__price">₹ {{ $product->sale_price }}<span>₹ {{ $product->price }}</span></div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
 
             @foreach($categoryProduct as $value)
                  
@@ -198,8 +120,8 @@
                         @if(count($product->productImages) > 0)
                             <div class="col-lg-3 col-md-4 col-sm-6 mix {{ $value->name }}">
                                 <div class="product__item">
-                 
-                                        <div class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0) {{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
+                                    <a href="{{ url('/product-detail') }}/{{ $product->id }}"><img height="350" src="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif" alt="{{ $product->name }}"></a>
+                                        <div style="display: none;" class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0) {{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
                                             <div class="label new">New</div>
                                             <ul class="product__hover">
                                                 <li><a href="{{ asset('storage/'.$product->productImages[0]->image_path) }}" class="image-popup"><span class="arrow_expand"></span></a></li>
@@ -244,32 +166,20 @@
 <!-- Product Section End -->
 
 <!-- Banner Section Begin -->
-<section class="banner set-bg" data-setbg="{{ url('/frontend/img/banner/banner-1.jpg') }}">
+<section class="banner set-bg" data-setbg="@if($promotionalbanner){{ asset('storage/'.$promotionalbanner->background_image) }} @endif">
     <div class="container">
         <div class="row">
             <div class="col-xl-7 col-lg-8 m-auto">
                 <div class="banner__slider owl-carousel">
-                    <div class="banner__item">
-                        <div class="banner__text">
-                            <span>The Chloe Collection</span>
-                            <h1>The Project Jacket</h1>
-                            <a href="#">Shop now</a>
+                    @foreach($promotionalslider as $value)
+                        <div class="banner__item">
+                            <div class="banner__text">
+                                <span>{{ $value->title }}</span>
+                                <h1>{{ $value->description }}</h1>
+                                <a href="{{ $value->url }}" target="_blank">Shop now</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="banner__item">
-                        <div class="banner__text">
-                            <span>The Chloe Collection</span>
-                            <h1>The Project Jacket</h1>
-                            <a href="#">Shop now</a>
-                        </div>
-                    </div>
-                    <div class="banner__item">
-                        <div class="banner__text">
-                            <span>The Chloe Collection</span>
-                            <h1>The Project Jacket</h1>
-                            <a href="#">Shop now</a>
-                        </div>
-                    </div>
+                    @endforeach    
                 </div>
             </div>
         </div>
@@ -400,7 +310,7 @@
         <div class="row">
             <div class="col-lg-6 p-0">
                 <div class="discount__pic">
-                    <img src="{{ url('/frontend/img/discount.jpg') }}" alt="">
+                    <img src="@if($discountbanner){{ asset('storage/'.$discountbanner->discount_background_image) }}@endif" alt="">
                 </div>
             </div>
             <div class="col-lg-6 p-0">
@@ -408,9 +318,9 @@
                     <div class="discount__text__title">
                         <span>Discount</span>
                         <h2>Summer {{ date('Y') }}</h2>
-                        <h5><span>Sale</span> 50%</h5>
+                        {{-- <h5><span>Sale</span> 50%</h5> --}}
                     </div>
-                    <div class="discount__countdown" id="countdown-time">
+                    <div class="discount__countdown" id="countdown-time" style="display: none;">
                         <div class="countdown__item">
                             <span>22</span>
                             <p>Days</p>
@@ -428,7 +338,7 @@
                             <p>Sec</p>
                         </div>
                     </div>
-                    <a href="#">Shop now</a>
+                    <a href="@if($discountbanner) {{$discountbanner->url}} @endif" target="_blank">Shop now</a>
                 </div>
             </div>
         </div>
@@ -444,7 +354,7 @@
                 <div class="services__item">
                     <i class="fa fa-car"></i>
                     <h6>Free Shipping</h6>
-                    <p>For all oder over $99</p>
+                    <p>For all order over $99</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-4 col-sm-6">

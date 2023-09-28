@@ -72,13 +72,21 @@ class RegisterController extends Controller
 
   
         // Loop through guest cart items and sync with user's cart
-        foreach ($guestCart as $productId => $item) {
-
+        foreach ($guestCart as $sku => $item) {
             $user->carts()->updateOrCreate(
-                ['product_id' => $productId],
+                ['sku' => $sku],
+                ['product_id' => $item['productId']],
                 ['quantity' => $item['quantity']]
             );
+
         }
+        // foreach ($guestCart as $productId => $item) {
+
+        //     $user->carts()->updateOrCreate(
+        //         ['product_id' => $productId],
+        //         ['quantity' => $item['quantity']]
+        //     );
+        // }
 
         // Clear guest cart from session
         session()->forget('guest_cart');
@@ -109,10 +117,40 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        if($user) {
+            // Get guest cart items from session
+            $guestCart = session('guest_cart', []);
+
+
+            // Loop through guest cart items and sync with user's cart
+            foreach ($guestCart as $sku => $item) {
+                $user->carts()->updateOrCreate(
+                    ['sku' => $sku],
+                    ['product_id' => $item['productId']],
+                    ['quantity' => $item['quantity']]
+                );
+
+            }
+            // foreach ($guestCart as $productId => $item) {
+
+            //     $user->carts()->updateOrCreate(
+            //         ['product_id' => $productId],
+            //         ['quantity' => $item['quantity']]
+            //     );
+            // }
+
+            // Clear guest cart from session
+            session()->forget('guest_cart');
+        }
+    
+
+
+        return $user;
     }
 }

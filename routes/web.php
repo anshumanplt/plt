@@ -113,6 +113,12 @@ Route::middleware('auth:admin')->group(function () {
     Route::post('admin/settings/homepage/update', [SettingController::class, 'homepageupdate'])->name('admin.settings.homepage.update');
     Route::post('admin/settings/homepage/add-banner', [SettingController::class, 'addhomepagebanner'])->name('admin.settings.homepage.addbanner');
     Route::delete('admin/settings/homepage/delete-banner/{id}', [SettingController::class, 'bannerdestroy'])->name('admin.settings.homepage.removebanner');
+
+    Route::post('admin/settings/promotional/slider', [SettingController::class, 'promotionalslider'])->name('admin.settings.promotional.slider');
+    Route::get('admin/settings/promotional/slider/delete/{id}', [SettingController::class, 'promotionalsliderdelete'])->name('admin.settings.promotional.slider.delete');
+
+    Route::post('admin/settings/promotional/banner', [SettingController::class, 'promotionalbanner'])->name('admin.settings.promotional.banner');
+    Route::post('admin/settings/discount/banner', [SettingController::class, 'discountbanner'])->name('admin.settings.discount.banner');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -186,8 +192,8 @@ Route::get('/search', [App\Http\Controllers\FrontController::class, 'search'])->
 Route::get('/cart', [CartController::class, 'index'])
     ->name('cart.index');
     
-Route::post('/ajaxcart/add/{product?}/{sku?}', [CartController::class, 'add'])
-    ->name('ajaxcart.add');
+// Route::post('/ajaxcart/add/{product?}/{sku?}', [CartController::class, 'add'])
+//     ->name('ajaxcart.add');
 
 Route::get('/cart/add/{product?}/{sku?}', [CartController::class, 'add'])
     ->name('cart.add');
@@ -195,7 +201,7 @@ Route::get('/cart/add/{product?}/{sku?}', [CartController::class, 'add'])
 Route::put('/cart/update/{product}/{sku?}', [CartController::class, 'update'])
     ->name('cart.update');
 
-Route::get('/cart/remove/{product}', [CartController::class, 'remove'])
+Route::get('/cart/remove/{sku}', [CartController::class, 'remove'])
     ->name('cart.remove');
 
 Route::get('/', [App\Http\Controllers\FrontController::class, 'index'])->name('home');

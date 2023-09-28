@@ -104,7 +104,19 @@
                             @else
 
                             @if(count($allSelectedAttributevalue) > 0)
-                                <a href="javascript:void(0)" onclick="alert('Please select product variant.')"  class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                                @if(count($variantData) > 0) 
+                                    <a href="javascript:void(0)" onclick="alert('Please select product variant.')"  class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                                    @else 
+                                    <form method="POST" action="{{ route('notifyme') }}">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label for="">Email:</label>
+                                            <input type="text" placeholder="Email" required class="form-control" name="email" >
+                                        </div>
+                                        <button type="submit" class="cart-btn">Notify Me</button>
+    
+                                    </form>
+                                @endif
                                 @else
                                 <form method="POST" action="{{ route('notifyme') }}">
                                     @csrf
@@ -141,8 +153,9 @@
                             </ul>
                         </div>
                         <div class="product__details__widget">
+                            
                             @if(count($allSelectedAttributevalue) > 0)
-                                <form action="{{ url('/product-detail') }}/{{ $product->id }}" method="get">
+                                <form action="{{ url('/product-detail') }}/{{ $product->id }}" id="myForm" method="get">
                                     @csrf
                                     @foreach ($allAttribute as $key => $item)
                                         <div class="row">
@@ -155,7 +168,7 @@
                                                         @if(in_array($value->id, $allSelectedAttributevalue))
                                                             <label for="">
                                                                 <label for="">{{ $value->value }}</label>   
-                                                                <input type="radio" name="{{ $item->name }}" @if( request()->get($item->name) )  @if($value->id == request()->get($item->name)) checked @endif @endif value="{{ $value->id }}" id="">
+                                                                <input type="radio" name="{{ $item->name }}" class="options" @if( request()->get($item->name) )  @if($value->id == request()->get($item->name)) checked @endif @endif value="{{ $value->id }}" id="">
                                                                 <span class="checkmark"></span>
                                                             </label>
                                                         @endif
@@ -164,18 +177,14 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                    <button type="submit">Submit Variants</button>
+                                    <button type="submit" style="display: none;">Submit Variants</button>
                                 </form>
                             @endif
                            
 
                              
                              
-                                {{-- <li>
-                                    <span>Promotions:</span>
-                                    <p>Free shipping</p>
-                                </li> --}}
-                            {{-- </ul> --}}
+                           
                         </div>
                     </div>
                 </div>
@@ -271,7 +280,27 @@
         </div>
     </section>
     <!-- Product Details Section End -->
-
+    <script>
+        // Get a reference to the form
+        var form = document.getElementById('myForm');
+    
+        // Get a reference to the radio buttons
+        var radioButtons = form.getElementsByClassName('options');
+    
+        // Attach a change event listener to the radio buttons
+        for (var i = 0; i < radioButtons.length; i++) {
+            radioButtons[i].addEventListener('change', function () {
+                // Check if any radio button is checked
+                for (var j = 0; j < radioButtons.length; j++) {
+                    if (radioButtons[j].checked) {
+                        // Submit the form
+                        form.submit();
+                        break;
+                    }
+                }
+            });
+        }
+    </script>
     <script>
  
         function getAttribute() {

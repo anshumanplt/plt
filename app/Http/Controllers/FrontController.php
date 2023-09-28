@@ -10,6 +10,9 @@ use App\Models\ProductAttribute;
 use App\Models\ProductAttributeImage;
 use App\Models\Setting;
 use App\Models\Banner;
+use App\Models\Promotionalbanner;
+use App\Models\Promotionalslider;
+use App\Models\Discountbanner;
 
 class FrontController extends Controller
 {
@@ -73,7 +76,11 @@ class FrontController extends Controller
 
         // $data['instagramFeed'] = $response;
        
+        $data['promotionalbanner'] = Promotionalbanner::where('status', 1)->first();
 
+        $data['promotionalslider'] = Promotionalslider::where('status', 1)->get();
+
+        $data['discountbanner'] = Discountbanner::where('status', 1)->first();
 
         return view('frontendhome', $data);
     }
@@ -195,13 +202,16 @@ class FrontController extends Controller
         $Fabric= $request->get('Fabric');
         $variantData = [];
         if($Size && $Color && $Fabric) {
+            // echo "<pre>"; print_r(['attribute_value_id' => $Size.','.$Color.','.$Fabric, 'product_id' => $product->id]); echo "</pre>"; die("check");
             $productSku = ProductAttribute::where(['attribute_value_id' => $Size.','.$Color.','.$Fabric, 'product_id' => $product->id])->first();
-            // echo "<pre>"; echo $Size.','.$Color.','.$Fabric; echo $product->id; print_r($productSku); die("check");
-            $productSKUImages = ProductAttributeImage::where(['sku' => $productSku->sku])->get();
-            $variantData = [
-                'productSku' => $productSku,
-                'productSKUImages' => $productSKUImages
-            ];
+            if($productSku) {
+                $productSKUImages = ProductAttributeImage::where(['sku' => $productSku->sku])->get();
+                $variantData = [
+                    'productSku' => $productSku,
+                    'productSKUImages' => $productSKUImages
+                ];
+            }
+
         }else{
             $checkAtt = ProductAttribute::where('product_id', $productId)->first();
             if($checkAtt) {
@@ -211,7 +221,7 @@ class FrontController extends Controller
             }
         }
 
-
+       
         
 
         return view('product_detail', compact('product', 'categories', 'relatedProduct', 'allAttribute', 'allSelectedAttribute', 'allArray', 'variantData', 'allSelectedAttributevalue'));

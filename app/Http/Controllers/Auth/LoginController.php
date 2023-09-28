@@ -60,10 +60,10 @@ class LoginController extends Controller
         // echo "<pre>"; print_r($guestCart); die("check");
 
         // Loop through guest cart items and sync with user's cart
-        foreach ($guestCart as $productId => $item) {
+        foreach ($guestCart as $sku => $item) {
             $user->carts()->updateOrCreate(
-                ['product_id' => $productId],
-                ['sku' => $item['sku']],
+                ['sku' => $sku],
+                ['product_id' => $item['productId']],
                 ['quantity' => $item['quantity']]
             );
 

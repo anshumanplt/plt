@@ -49,19 +49,36 @@ class CartController extends Controller
             //     ['sku' => $sku]
             // );
         } else {
-            // If guest, add to session cart
             $guestCart = session('guest_cart', []);
-            if (isset($guestCart[$productId])) {
-                $guestCart[$productId]['quantity'] += $request->input('quantity', 1);
-            } else {
-                $guestCart[$productId] = [
-                    // 'quantity' => $request->input('quantity', 1),
+            if (isset($guestCart[$sku])) {
+                $guestCart[$sku]['quantity'] += $request->input('quantity', 1);
+            }else{
+                $guestCart[$sku] = [
                     'productId' => $productId,
                     'quantity' => $quantity,
                     'sku' => $sku
                 ];
             }
             session(['guest_cart' => $guestCart]);
+
+            // If guest, add to session cart
+            // Commenting old code 
+            /*
+            $guestCart = session('guest_cart', []);
+            if (isset($guestCart[$productId])) {
+                $guestCart[$productId]['quantity'] += $request->input('quantity', 1);
+            } else {
+                $guestCart[$productId] = [
+                    'productId' => $productId,
+                    'quantity' => $quantity,
+                    'sku' => $sku
+                ];
+            }
+            session(['guest_cart' => $guestCart]);
+            */
+
+
+
         }
 
         return redirect()->back()->with('success', 'Product added to cart.');
@@ -83,11 +100,21 @@ class CartController extends Controller
         } else {
             // If guest, update session cart item
             $guestCart = session('guest_cart', []);
+            if (isset($guestCart[$sku])) {
+                $guestCart[$sku]['quantity'] = $quantity;
+                $guestCart[$sku]['sku'] = $sku;
+                // echo "<pre>"; print_r($guestCart); die("check");
+                session(['guest_cart' => $guestCart]);
+            }
+            // Commenting old code 
+            /*
+            $guestCart = session('guest_cart', []);
             if (isset($guestCart[$productId])) {
                 $guestCart[$productId]['quantity'] = $quantity;
                 $guestCart[$productId]['sku'] = $sku;
                 session(['guest_cart' => $guestCart]);
             }
+            */
         }
 
 
@@ -95,17 +122,20 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'Cart updated.');
     }
 
-    public function remove($productId)
+    public function remove($sku)
     {
         // If user is logged in, remove from user's cart
         if (Auth::check()) {
             $user = Auth::user();
-            $user->carts()->where('product_id', $productId)->delete();
+            $user->carts()->where('sku', $sku)->delete();
+
+            // Old commented code
+            // $user->carts()->where('product_id', $productId)->delete();
         } else {
             // If guest, remove from session cart
             $guestCart = session('guest_cart', []);
-            if (isset($guestCart[$productId])) {
-                unset($guestCart[$productId]);
+            if (isset($guestCart[$sku])) {
+                unset($guestCart[$sku]);
                 session(['guest_cart' => $guestCart]);
             }
         }
@@ -116,6 +146,7 @@ class CartController extends Controller
     public function index()
     {
         $cartItems = [];
+
 
         if (Auth::check()) {
             $user = Auth::user();
@@ -134,12 +165,17 @@ class CartController extends Controller
             // Fetch guest cart items using session data
             $guestCart = session('guest_cart', []);
 
+            // unset($guestCart[4]);
+
+           
             foreach($guestCart as $value) {
+                
                 $product = Product::where('id', $value['productId'])->with('images')->first();
+                
                 $product->quantity = $value['quantity'];
                 $product->sku = $value['sku'];
                 $cartItems[] = $product;
-                // echo "<pre>"; print_r($value); die("check");
+                // echo "<pre>"; print_r($cartItems); die("check");
             }
 
             // echo "<pre>"; print_r($guestCart); die("check");

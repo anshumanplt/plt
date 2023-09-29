@@ -7,6 +7,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{{ config('app.name', 'Laravel') }}</title>
+       
         <!-- plugins:css -->
         <link rel="stylesheet" href="{{ asset('admin_theme/assets/vendors/mdi/css/materialdesignicons.min.css') }}">
         <link rel="stylesheet" href="{{ asset('admin_theme/assets/vendors/css/vendor.bundle.base.css') }}">
@@ -18,7 +19,8 @@
         <!-- Layout styles -->
         <link rel="stylesheet" href="{{ asset('admin_theme/assets/css/style.css') }}">
         <!-- End layout styles -->
-        <link rel="shortcut icon" href="{{ asset('admin_theme/assets/images/favicon.ico') }}" />
+    
+        <link rel="icon" type="image/x-icon" href="{{ url('/frontend/img/prettyloving-favicon.jpg') }}">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
       </head>
@@ -27,8 +29,8 @@
               <!-- partial:../../partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <a class="navbar-brand brand-logo" href="{{ url('/home') }}"><img src="{{ url('/frontend/img/1657366295logo.png') }}" alt="logo" /></a>
-          <a class="navbar-brand brand-logo-mini" href="{{ url('/home') }}"><img src="{{ url('/frontend/img/1657366295logo.png') }}" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="{{ url('/home') }}"><img src="{{ url('/frontend/img/prettylovingthing-logo.png') }}" alt="logo" /></a>
+          <a class="navbar-brand brand-logo-mini" href="{{ url('/home') }}"><img src="{{ url('/frontend/img/prettylovingthing.jpg') }}" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">

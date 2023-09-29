@@ -9,6 +9,8 @@ use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 
 class ProductController extends Controller
 {
@@ -249,6 +251,32 @@ class ProductController extends Controller
         return view('products.create', compact('brands', 'categories'));
     }
 
+    public function create_slug() {
+        $allProduct = Product::get();
+        foreach ($allProduct as $key => $value) {
+            
+            if($this->checkslug($value->name)) {
+                $slug = $this->checkslug($value->name);
+                Product::where('id', $value->id)->update(['slug' =>$slug]); 
+            }
+                       
+        }
+        
+        return "Slug Updated";
+    }
+
+    function checkslug ($slug) {
+        $strSlug = Str::slug($slug);
+        $slugData = Product::where('slug', $strSlug)->first();
+        if($slugData) {
+            
+            return $this->checkslug($strSlug.'-'.$slugData->id.'-'.rand());
+            
+        }else{
+            return $strSlug;
+        }
+    }
+
     /**
      * Store a newly created product in storage.
      *
@@ -276,8 +304,11 @@ class ProductController extends Controller
         // if($validator->fails()) {
         //     return Redirect::back()->withErrors($validator);
         // }
+        $productData = $request->all();
+        $$productData['slug'] = $this->checkslug($request->input('name'));
 
-        Product::create($request->all());
+
+        Product::create($productData);
 
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully.');

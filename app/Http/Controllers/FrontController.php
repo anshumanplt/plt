@@ -88,7 +88,7 @@ class FrontController extends Controller
     public function category($category)
     {
         // Retrieve the category based on slug or ID
-        $category = Category::where('category_id', $category)->firstOrFail();
+        $category = Category::where('slug', $category)->firstOrFail();
 
         // Retrieve the products for the category
         // $products = $category->products;
@@ -132,12 +132,12 @@ class FrontController extends Controller
             $allMenu[] = $value;
         }
 
-        $allSelectedAttribute = ProductAttribute::where('product_id', $product)->get();
+        $product = Product::where('slug', $product)->with('productImages')->first();
+
+        $allSelectedAttribute = ProductAttribute::where('product_id', $product->id)->get();
 
         $categories = $allMenu;
-        $productId = $product;
-
-        $product = Product::where('id', $product)->with('productImages')->first();
+        $productId = $product->id;
 
         $relatedProduct = Product::where('category_id', $product->category_id)->with('productImages')->orderBy('id', 'DESC')->limit(4)->get();
 
@@ -216,7 +216,7 @@ class FrontController extends Controller
             $checkAtt = ProductAttribute::where('product_id', $productId)->first();
             if($checkAtt) {
                 $attArr = explode(',', $checkAtt->attribute_value_id);
-                return redirect('product-detail/'.$productId.'?Size='.$attArr[0].'&Color='.$attArr[1].'&Fabric='.$attArr[2]);
+                return redirect('product-detail/'.$product->slug.'?Size='.$attArr[0].'&Color='.$attArr[1].'&Fabric='.$attArr[2]);
                 
             }
         }

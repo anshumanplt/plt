@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -59,6 +60,7 @@ class CategoryController extends Controller
         // Create a new category
         $category = new Category;
         $category->name = $request->input('name');
+        $category->slug = $this->checkslug($request->input('name'));
         $category->image = $imageName;
         $category->parent_id = $request->input('parent_id');
         $category->meta_title = $request->input('meta_title');
@@ -69,6 +71,33 @@ class CategoryController extends Controller
 
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
+
+    public function create_slug() {
+        $allProduct = Category::get();
+        foreach ($allProduct as $key => $value) {
+            
+            if($this->checkslug($value->name)) {
+                $slug = $this->checkslug($value->name);
+                Category::where('category_id', $value->category_id )->update(['slug' =>$slug]); 
+            }
+                       
+        }
+        
+        return "Slug Updated";
+    }
+
+    function checkslug ($slug) {
+        $strSlug = Str::slug($slug);
+        $slugData = Category::where('slug', $strSlug)->first();
+        if($slugData) {
+            
+            return $this->checkslug($strSlug.'-'.$slugData->category_id.'-'.rand());
+            
+        }else{
+            return $strSlug;
+        }
+    }
+
 
     // Add other resource methods like show(), edit(), update(), destroy() based on your requirements.
     public function edit($id)

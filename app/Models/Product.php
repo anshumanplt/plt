@@ -25,7 +25,8 @@ class Product extends Model
             'status',
             'hot_trend',
             'best_seller',
-            'feature'
+            'feature',
+            'slug'
         ];
     
         // Define the relationships with other models

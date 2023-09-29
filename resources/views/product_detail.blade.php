@@ -155,7 +155,7 @@
                         <div class="product__details__widget">
                             
                             @if(count($allSelectedAttributevalue) > 0)
-                                <form action="{{ url('/product-detail') }}/{{ $product->id }}" id="myForm" method="get">
+                                <form action="{{ url('/product-detail') }}/{{ $product->slug }}" id="myForm" method="get">
                                     @csrf
                                     @foreach ($allAttribute as $key => $item)
                                         <div class="row">

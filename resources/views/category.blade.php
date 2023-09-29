@@ -1,6 +1,9 @@
 @extends('layouts.frontlayout')
 
 @section('content')
+
+
+
     <!-- Breadcrumb Begin -->
     <div class="breadcrumb-option">
         <div class="container">
@@ -31,13 +34,13 @@
                                     @foreach ($categories as $item)
                                     <div class="card">
                                         <div class="card-heading active">
-                                            <a data-toggle="collapse" data-target="#collapseOne{{ $item->category_id }}">{{ $item->name }}</a>
+                                            <a data-toggle="collapse" data-target="#collapseOne{{ $item->slug }}">{{ $item->name }}</a>
                                         </div>
                                         <div id="collapseOne{{ $item->category_id }}" class="collapse show" data-parent="#accordionExample">
                                             <div class="card-body">
                                                 <ul>
                                                     @foreach($item->submenu as $submenu)
-                                                        <li><a href="{{ url('category') }}/{{ $submenu->category_id }}">{{ $submenu->name }}</a></li>
+                                                        <li><a href="{{ url('category') }}/{{ $submenu->slug }}">{{ $submenu->name }}</a></li>
                                                     @endforeach
 
                                                 </ul>
@@ -168,7 +171,7 @@
                         @if(count($product->productImages) > 0)
                         <div class="col-lg-4 col-md-6">
                             <div class="product__item">
-                                <a href="{{ url('/product-detail') }}/{{ $product->id }}"><img height="350" src="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif" alt="{{ $product->name }}"></a>
+                                <a href="{{ url('/product-detail') }}/{{ $product->slug }}"><img height="350" src="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif" alt="{{ $product->name }}"></a>
                                 <div style="display: none;" class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
                                     <div class="label new">New</div>
                                     <ul class="product__hover">
@@ -191,7 +194,7 @@
                                     </ul>
                                 </div>
                                 <div class="product__item__text">
-                                    <h6><a href="{{ url('/product-detail') }}/{{ $product->id }}">{{ $product->name }}</a></h6>
+                                    <h6><a href="{{ url('/product-detail') }}/{{ $product->slug }}">{{ $product->name }}</a></h6>
                                     <div class="rating">
                                         {{-- <i class="fa fa-star"></i>
                                         <i class="fa fa-star"></i>

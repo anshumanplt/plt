@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Purple Admin</title>
+    <title>PrettyLovingThing Admin Login</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('admin_theme/assets/vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_theme/assets/vendors/css/vendor.bundle.base.css') }}">
@@ -17,7 +17,7 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{ asset('admin_theme/assets/css/style.css') }}">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="{{ asset('admin_theme/assets/images/favicon.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ url('/frontend/img/prettyloving-favicon.jpg') }}">
   </head>
   <body>
     <div class="container-scroller">

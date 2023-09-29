@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;   
 
 class RegisterController extends Controller
 {
@@ -147,6 +149,8 @@ class RegisterController extends Controller
 
             // Clear guest cart from session
             session()->forget('guest_cart');
+            $email =  $data['email'];
+            Mail::to($email)->send(new WelcomeMail($user));
         }
     
 

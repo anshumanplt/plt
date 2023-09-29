@@ -6,6 +6,8 @@
     <meta name="description" content="Prettylovingthing">
     <meta name="keywords" content="Prettylovingthing, Ecommerce">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="icon" type="image/x-icon" href="{{ url('/frontend/img/prettyloving-favicon.jpg') }}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Prettylovingthing</title>
 
@@ -73,7 +75,7 @@
             
         </ul>
         <div class="offcanvas__logo">
-            <a href="{{ url('/') }}"><img src="{{ url('/frontend/img/1657366295logo.png') }}" alt=""></a>
+            <a href="{{ url('/') }}"><img src="{{ url('/frontend/img/prettylovingthing-logo.png') }}" alt=""></a>
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
@@ -97,13 +99,13 @@
                         <ul>
                             {{-- <li class="{{ request()->is('/') ? 'active' : '' }}"><a href="{{ url('/') }}">Home</a></li> --}}
                             @foreach ($categories as $item)
-                                <li><a href="{{ url('category') }}/{{ $item->category_id }}">{{ $item->name }}</a>
+                                <li><a href="{{ url('category') }}/{{ $item->slug }}">{{ $item->name }}</a>
                                     <?php 
                                         if(count($item->submenu) > 0) {
                                             ?>
                                                 <ul class="dropdown">
                                                     @foreach($item->submenu as $submenu)
-                                                    <li><a href="{{ url('category') }}/{{ $submenu->category_id }}">{{ $submenu->name }}</a></li>
+                                                    <li><a href="{{ url('category') }}/{{ $submenu->slug }}">{{ $submenu->name }}</a></li>
                                                     @endforeach
                                                 </ul>
                                             <?php
@@ -257,7 +259,7 @@
             <div class="col-lg-4 col-md-6 col-sm-7">
                 <div class="footer__about">
                     <div class="footer__logo">
-                        <a href="{{ url('/') }}"><img src="{{ url('/frontend/img/1657366295logo.png') }}" alt=""></a>
+                        <a href="{{ url('/') }}"><img src="{{ url('/frontend/img/prettylovingthing-logo.png') }}" alt=""></a>
                     </div>
                     <p>We are Pretty Loving Thing. The brand behind fashion Freedom.We exist for the love of fashion. We have got all the permimum range of outfits you could ever need in life. from ”designer fashion for women to the latest trends in women’s fashion” From date night dress to ritual colection.</p>
                     <div class="footer__payment">

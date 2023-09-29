@@ -157,6 +157,9 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+
+// Route::get('/category/create-slug', [App\Http\Controllers\CategoryController::class,'create_slug']);
+
 Route::get('/make-shipping-order', [OrderController::class, 'makeshippingorder'])->name('make.shipping.order');
 
 Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
@@ -205,8 +208,8 @@ Route::get('/cart/remove/{sku}', [CartController::class, 'remove'])
     ->name('cart.remove');
 
 Route::get('/', [App\Http\Controllers\FrontController::class, 'index'])->name('home');
-Route::get('/category/{id}', [App\Http\Controllers\FrontController::class, 'category']);
-Route::get('/product-detail/{id}/{sku?}', [App\Http\Controllers\FrontController::class, 'product']);
+Route::get('/category/{slug}', [App\Http\Controllers\FrontController::class, 'category']);
+Route::get('/product-detail/{slug}/{sku?}', [App\Http\Controllers\FrontController::class, 'product']);
 
 
 // Static Pages

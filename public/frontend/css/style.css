@@ -1146,6 +1146,7 @@ ol {
 }
 
 .product__item {
+	text-align: center;
 	margin-bottom: 35px;
 }
 

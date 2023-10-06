@@ -167,11 +167,14 @@
                 </div>
                 <div class="col-lg-9 col-md-9">
                     <div class="row">
+                        @if(count($products) == 0) 
+                            <center><h3>No product found.</h3></center>
+                        @endif
                         @foreach($products as $product)
                         @if(count($product->productImages) > 0)
                         <div class="col-lg-4 col-md-6">
                             <div class="product__item">
-                                <a href="{{ url('/product-detail') }}/{{ $product->slug }}"><img height="350" src="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif" alt="{{ $product->name }}"></a>
+                                <a href="{{ url('/product-detail') }}/{{ $product->slug }}"><img height="100%" src="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif" alt="{{ $product->name }}"></a>
                                 <div style="display: none;" class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
                                     <div class="label new">New</div>
                                     <ul class="product__hover">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Razorpay\Api\Api;
+use Illuminate\Support\Facades\App;
 
 class PaymentController extends Controller
 {
@@ -38,7 +39,20 @@ class PaymentController extends Controller
     {
 
         $paymentId = $request->input('payment_id');
-        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+
+        if(App::environment() == 'local') {
+            $RAZORPAY_KEY = 'rzp_test_MieaCsbx9Y9ns7';
+            $RAZORPAY_SECRET = '1zHBvyQSh59yEcMKnpMY86DF';
+        }else{
+            $RAZORPAY_KEY = 'rzp_live_U7Ohduc1Dvz9aS';
+            $RAZORPAY_SECRET = '5NndwWm8GgOXdC3N3fITJJT6';
+        }
+
+        $api = new Api($RAZORPAY_KEY, $RAZORPAY_SECRET);
+
+        // $payment = $api->payment->fetch($paymentId);
+            
+        // echo "<pre>"; print_r($payment); die("check");
 
         try {
             $payment = $api->payment->fetch($paymentId);
@@ -49,7 +63,8 @@ class PaymentController extends Controller
             if ($payment->status === 'authorized') {
                 $updateOrder = Order::where('id', $payment->description)->update([
                     'payment_status' => 'success',
-                    'payment_id' => $payment->id
+                    'payment_id' => $payment->id,
+                    'order_state' => 'pending'
                 ]);
                 return redirect()->route('orders.index')->with('success', 'Order placed successfully.');
                 // Payment was successful
@@ -66,7 +81,13 @@ class PaymentController extends Controller
                 // Handle accordingly
             }
         } catch (\Throwable $e) {
-            die("error");
+            // die("error");
+            $updateOrder = Order::where('id', $request->input('order_id'))->update([
+                'payment_status' => 'failed',
+                // 'payment_id' => $payment->id,
+                'order_state' => 'cancel'
+            ]);
+            return redirect()->route('orders.index')->with('success', 'Order failed.');
             // Handle errors, log them, and inform the user if necessary
         }
 

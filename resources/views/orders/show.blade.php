@@ -17,10 +17,10 @@
     <div class="container" style="min-height: 450px;">
     
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 sidebar">
                 @include('myaccount_sidebar')
             </div>
-            <div class="col-md-9">
+            <div class="col-md-9 content">
                 <h2>Order Details</h2>
                 <table class="table">
                     <thead>

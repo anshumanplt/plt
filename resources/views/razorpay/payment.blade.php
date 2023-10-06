@@ -11,12 +11,12 @@
                         <form id="paymentForm">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" name="name" value="{{ Auth::user()->name }}" id="name" class="form-control" required>
+                                <input type="text" name="name" value="{{ Auth::user()->name }}" readonly id="name" class="form-control" required>
                             </div>
                             <input type="hidden" name="orderid" value="{{ $orderIdData }}">
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" name="email" value="{{ Auth::user()->email }}" id="email" class="form-control" required>
+                                <input type="email" name="email" value="{{ Auth::user()->email }}" readonly id="email" class="form-control" required>
                             </div>
 
                             <div class="form-group">
@@ -25,7 +25,7 @@
                                 <input type="hidden" name="amount" id="amount" value="{{ $orderAmount }}" class="form-control" required>
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Pay Now</button>
+                            <button type="submit" id="submitButton" class="btn btn-primary">Pay Now</button>
                         </form>
                     </div>
                 </div>
@@ -33,13 +33,15 @@
         </div>
     </div>
 
+
+
     {{-- Include Razorpay JavaScript SDK --}}
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     {{-- Your JavaScript code for handling Razorpay payments --}}
     <script>
         var options = {
-            key: '{{ env('RAZORPAY_KEY') }}', // Your Razorpay API Key
+            key: '{{ $RAZORPAY_KEY }}', // Your Razorpay API Key
             amount: '{{ $orderAmount }}', // Amount in paise (e.g., 1000 for ₹10)
             currency: 'INR',
             name: 'Prettylovingthing',
@@ -48,7 +50,12 @@
             image: '{{ url('/') }}/frontend/img/1657366295logo.png',
             handler: function(response) {
                 // Handle the payment success and redirect to a success page
-                window.location.href = '/public/payment/success?payment_id=' + response.razorpay_payment_id + '&order_id='+ {{ $orderIdData }};
+                window.location.href = '/payment/success?payment_id=' + response.razorpay_payment_id + '&order_id='+ {{ $orderIdData }};
+            },
+            prefill: {
+                name: '{{ Auth::user()->name }}',
+                email: '{{ Auth::user()->email }}',
+                orderId: '{{ $orderIdData }}'
             },
             user: {
                 // Pass user-related data here
@@ -64,6 +71,11 @@
         };
 
         var rzp = new Razorpay(options);
+
+        rzp.on('payment.failed', function (response) {
+            // Handle payment failure
+            window.location.href = '/payment-failed?order_id='+ {{ $orderIdData }}; // Redirect to payment failed page
+        });
 
         document.getElementById('paymentForm').addEventListener('submit', function(e) {
             e.preventDefault();

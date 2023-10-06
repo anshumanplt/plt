@@ -92,6 +92,42 @@
                             <span>₹ {{ $product->price }}</span></div>
                         <p>@if(count($variantData) > 0) <b>SKU:</b> {{ $variantData['productSku']->sku }} @endif</p>
                         <p>{{ $product->description }}</p>
+
+                        <div class="product__details__widget">
+                            
+                            @if(count($allSelectedAttributevalue) > 0)
+                                <form action="{{ url('/product-detail') }}/{{ $product->slug }}" id="myForm" method="get">
+                                    @csrf
+                                    @foreach ($allAttribute as $key => $item)
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <span>{{ $item->name }}:</span>
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <div class="stock__checkbox">
+                                                    @foreach($item->attributeValues as $value) 
+                                                        @if(in_array($value->id, $allSelectedAttributevalue))
+                                                            <label for="">
+                                                                <label for="">{{ $value->value }}</label>   
+                                                                <input type="radio" name="{{ $item->name }}" class="options" @if( request()->get($item->name) )  @if($value->id == request()->get($item->name)) checked @endif @endif value="{{ $value->id }}" id="">
+                                                                <span class="checkmark"></span>
+                                                            </label>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    <button type="submit" style="display: none;">Submit Variants</button>
+                                </form>
+                            @endif
+                           
+
+                             
+                             
+                           
+                        </div>
+
                         <div class="product__details__button">
                             {{-- <div class="quantity">
                                 <span>Quantity:</span>
@@ -131,6 +167,9 @@
                             @endif
 
                             @endif
+
+                            
+
                             <ul>
                                
 
@@ -152,40 +191,7 @@
                                 {{-- <li><a href="#"><span class="icon_adjust-horiz"></span></a></li> --}}
                             </ul>
                         </div>
-                        <div class="product__details__widget">
-                            
-                            @if(count($allSelectedAttributevalue) > 0)
-                                <form action="{{ url('/product-detail') }}/{{ $product->slug }}" id="myForm" method="get">
-                                    @csrf
-                                    @foreach ($allAttribute as $key => $item)
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <span>{{ $item->name }}:</span>
-                                            </div>
-                                            <div class="col-sm-8">
-                                                <div class="stock__checkbox">
-                                                    @foreach($item->attributeValues as $value) 
-                                                        @if(in_array($value->id, $allSelectedAttributevalue))
-                                                            <label for="">
-                                                                <label for="">{{ $value->value }}</label>   
-                                                                <input type="radio" name="{{ $item->name }}" class="options" @if( request()->get($item->name) )  @if($value->id == request()->get($item->name)) checked @endif @endif value="{{ $value->id }}" id="">
-                                                                <span class="checkmark"></span>
-                                                            </label>
-                                                        @endif
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                    <button type="submit" style="display: none;">Submit Variants</button>
-                                </form>
-                            @endif
-                           
-
-                             
-                             
-                           
-                        </div>
+               
                     </div>
                 </div>
                 <div class="col-lg-12" style="display: none;">
@@ -256,7 +262,7 @@
                                 </ul>
                             </div>
                             <div class="product__item__text">
-                                <h6><a href="{{ url('/product-detail') }}/{{ $item->id }}">{{ $item->name }}</a></h6>
+                                <h6><a href="{{ url('/product-detail') }}/{{ $item->slug }}">{{ $item->name }}</a></h6>
                                 <div class="rating">
                                     {{-- <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>

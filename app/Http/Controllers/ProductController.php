@@ -10,7 +10,9 @@ use App\Models\ProductAttribute;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
+use DateTime;
+use Illuminate\Support\Facades\Http;
+use App\Models\ProductAttributeImage;
 
 class ProductController extends Controller
 {
@@ -54,6 +56,8 @@ class ProductController extends Controller
         $csvData = file_get_contents($file);
         $rows = array_map('str_getcsv', explode("\n", $csvData));
 
+        // echo "<pre>"; print_r($rows); echo "</pre>"; die("check data");
+
         // Perform your data import logic here
         // You can loop through $rows and insert data into your database
 
@@ -74,22 +78,147 @@ class ProductController extends Controller
                 // echo "<pre>"; print_r($row); die("check");
                 $checkProduct = Product::where('sku', $row[0])->first();
                 
+                $slug = $this->checkslug($row[15]);
+                
+
                 $data = [
-                    'sku' => $row[0],
-                    'meta_title' => $row[15],
-                    'meta_description' => $row[16],
-                    'subcategory_id' => $request->input('subcategory_id'),
-                    'category_id' => $request->input('category_id'),
-                    'brand_id' => $request->input('brand_id'),
-                    'name' => $row[15],
-                    'description' => $row[16],
-                    'price' => $row[2],
-                    'sale_price' => $row[3],
-                    'status' => 0
+                    'sku'               => $row[0],
+                    'slug'              => $slug,
+                    'meta_title'        => $row[15],
+                    'meta_description'  => $row[16],
+                    'subcategory_id'    => $request->input('subcategory_id'),
+                    'category_id'       => $request->input('category_id'),
+                    'brand_id'          => $request->input('brand_id'),
+                    'name'              => $row[15],
+                    'description'       => $row[16],
+                    'price'             => $row[2],
+                    'sale_price'        => $row[3],
+                    'status'            => 0
                     
                 ];
+
+                // echo "<pre>"; print_r($data); echo "</pre>"; die("check");
+
                 if($checkProduct) { 
                     $duplicateProduct[] = $data;
+
+                    
+
+                    $sizeAttribute = AttributeValue::where('value', $row[6])->first();
+                    if(!$sizeAttribute) {
+                        $sizeAttribute = AttributeValue::create([
+                            'attribute_id' => 2,
+                            'value' =>  $row[6]
+                        ]);
+                    }
+                    $colorAtytribute = AttributeValue::where('value', $row[7])->first();
+                    if(!$colorAtytribute) {
+                        $colorAtytribute = AttributeValue::create([
+                            'attribute_id' => 3,
+                            'value' =>  $row[7]
+                        ]);
+                    }
+                    $fabricAtytribute = AttributeValue::where('value', $row[8])->first();
+                    if(!$fabricAtytribute) {
+                        $fabricAtytribute = AttributeValue::create([
+                            'attribute_id' => 4,
+                            'value' =>  $row[8]
+                        ]);
+                    }
+
+
+                    $attributeData = [
+                        'product_id' => $checkProduct->id,
+                        'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                        'price' => $row[3],
+                        'inventory' => $row[4],
+                        'attribute_value_id' => $sizeAttribute->id.','.$colorAtytribute->id.','.$fabricAtytribute->id
+                    ];
+
+                    $attributeCombination = $sizeAttribute->id.','.$colorAtytribute->id.','.$fabricAtytribute->id;
+
+
+                    $productAttributeCheck = ProductAttribute::where(['attribute_value_id' =>  $attributeCombination, 'product_id' => $checkProduct->id])->first();
+
+                    if($productAttributeCheck) {
+                        continue;
+                        // echo "<pre>"; print_r($productAttributeCheck); die("check");
+                    }
+
+                    // echo "<pre>"; print_r($sizeAttribute); print_r($colorAtytribute); print_r($fabricAtytribute);  print_r($attributeData); echo "</pre>"; die("check");
+
+                    ProductAttribute::create($attributeData);
+
+                    $productFeaturedata = [
+                        // 'product_id' => $checkProduct->id,
+                        'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                        'image_path' => $row[9],
+                        // 'featured' => 1
+
+                    ];
+
+                    ProductAttributeImage::create($productFeaturedata);
+
+                    if($row[10]) {
+                        $productImageOne = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[10],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageOne);
+                    }
+
+                    if($row[11]) {
+                        $productImageTwo = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[11],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageTwo);
+                    }
+
+                    if($row[12]) {
+                        $productImageThree = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[12],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageThree);
+                    }
+
+                    if($row[13]) {
+                        $productImageFour = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[13],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageFour);
+                    }
+
+                    if($row[14]) {
+                        $productImageFour = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[14],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageFour);
+                    }
+
                     continue;
                 }
 
@@ -98,7 +227,7 @@ class ProductController extends Controller
                 if($addProduct) {
                     $productFeaturedata = [
                         'product_id' => $addProduct->id,
-                        'image_path' => 'product_images/'.$row[9],
+                        'image_path' => $row[9],
                         'featured' => 1
 
                     ];
@@ -108,7 +237,7 @@ class ProductController extends Controller
                     if($row[10]) {
                         $productImageOne = [
                             'product_id' => $addProduct->id,
-                            'image_path' => 'product_images/'.$row[10],
+                            'image_path' => $row[10],
                             'featured' => 0
     
                         ];
@@ -119,7 +248,7 @@ class ProductController extends Controller
                     if($row[11]) {
                         $productImageTwo = [
                             'product_id' => $addProduct->id,
-                            'image_path' => 'product_images/'.$row[11],
+                            'image_path' => $row[11],
                             'featured' => 0
     
                         ];
@@ -130,7 +259,7 @@ class ProductController extends Controller
                     if($row[12]) {
                         $productImageThree = [
                             'product_id' => $addProduct->id,
-                            'image_path' => 'product_images/'.$row[12],
+                            'image_path' => $row[12],
                             'featured' => 0
     
                         ];
@@ -141,7 +270,7 @@ class ProductController extends Controller
                     if($row[13]) {
                         $productImageFour = [
                             'product_id' => $addProduct->id,
-                            'image_path' => 'product_images/'.$row[13],
+                            'image_path' => $row[13],
                             'featured' => 0
     
                         ];
@@ -152,7 +281,7 @@ class ProductController extends Controller
                     if($row[14]) {
                         $productImageFour = [
                             'product_id' => $addProduct->id,
-                            'image_path' => 'product_images/'.$row[14],
+                            'image_path' => $row[14],
                             'featured' => 0
     
                         ];
@@ -161,55 +290,117 @@ class ProductController extends Controller
                     }
 
                     $sizeAttribute = AttributeValue::where('value', $row[6])->first();
+                    if(!$sizeAttribute) {
+                        $sizeAttribute = AttributeValue::create([
+                            'attribute_id' => 2,
+                            'value' =>  $row[6]
+                        ]);
+                    }
                     $colorAtytribute = AttributeValue::where('value', $row[7])->first();
+                    if(!$colorAtytribute) {
+                        $colorAtytribute = AttributeValue::create([
+                            'attribute_id' => 3,
+                            'value' =>  $row[7]
+                        ]);
+                    }
                     $fabricAtytribute = AttributeValue::where('value', $row[8])->first();
+                    if(!$fabricAtytribute) {
+                        $fabricAtytribute = AttributeValue::create([
+                            'attribute_id' => 4,
+                            'value' =>  $row[8]
+                        ]);
+                    }
 
 
                     $attributeData = [
                         'product_id' => $addProduct->id,
-                        'sku' => $row[0],
+                        'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
                         'price' => $row[3],
+                        'inventory' => $row[4],
                         'attribute_value_id' => $sizeAttribute->id.','.$colorAtytribute->id.','.$fabricAtytribute->id
                     ];
 
                     ProductAttribute::create($attributeData);
+
+                    $productFeaturedata = [
+                        // 'product_id' => $checkProduct->id,
+                        'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                        'image_path' => $row[9],
+                        // 'featured' => 1
+
+                    ];
+
+                    ProductAttributeImage::create($productFeaturedata);
+
+                    if($row[10]) {
+                        $productImageOne = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[10],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageOne);
+                    }
+
+                    if($row[11]) {
+                        $productImageTwo = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[11],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageTwo);
+                    }
+
+                    if($row[12]) {
+                        $productImageThree = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[12],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageThree);
+                    }
+
+                    if($row[13]) {
+                        $productImageFour = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[13],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageFour);
+                    }
+
+                    if($row[14]) {
+                        $productImageFour = [
+                            'sku' => $row[0].$colorAtytribute->value.'_'.$sizeAttribute->value,
+                            // 'product_id' => $checkProduct->id,
+                            'image_path' => $row[14],
+                            // 'featured' => 0
+    
+                        ];
+    
+                        ProductAttributeImage::create($productImageFour);
+                    }
+
                     Product::where('id', $addProduct->id)->update(['status' => 1]);
                     ++$totalProductInserted;
 
                 }
 
-                // $data['sku'] = $row[0];
-                // $data['status'] = $row[1];
-                // $data['price'] = $row[2];
-                // $data['selling_price'] = $row[3];
-                // $data['stock'] = $row[4];
-                // $data['length'] = $row[5];
-                // $data['breadth'] = $row[6];
-                // $data['height'] = $row[7];
-                // $data['weight'] = $row[8];
-                // $data['brand'] = $row[9];
-                // $data['size'] = $row[10];
-                // $data['color'] = $row[11];
-                // $data['fabric'] = $row[12];
-                // $data['main_image'] = $row[13];
-
-                // $data['image1'] = $row[14];
-                // $data['image2'] = $row[15];
-                // $data['image3'] = $row[16];
-    
-                // $data['image4'] = $row[17];
-                // $data['image5'] = $row[18];
-    
-                
-                // $finalData[] = $data;
             }
 
         }
 
-        // echo "<pre>"; print_r($finalData);
-        // die("check");
-        // Redirect back with a success message
-        // return redirect()->back()->with('success', 'CSV file imported successfully');
         $brands = Brand::all();
         $categories = Category::all();
         $csvData = $finalData;

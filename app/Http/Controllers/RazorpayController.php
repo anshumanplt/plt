@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 use Razorpay\Api\Api;
 use App\Models\Category;
 use App\Models\Order;
+use Illuminate\Support\Facades\App;
 
 class RazorpayController extends Controller
 {
     public function createOrder($orderIdData)
     {
+
         $orderData = Order::where('id', $orderIdData)->first();
         // echo "<pre>"; print_r($orderData); die("check");
         // echo "RAZORPAY_KEY : ".env('RAZORPAY_KEY')."<br>";
@@ -29,9 +31,17 @@ class RazorpayController extends Controller
 
 
         $categories = $allMenu;
+        if(App::environment() == 'local') {
+               $RAZORPAY_KEY = 'rzp_test_MieaCsbx9Y9ns7';
+               $RAZORPAY_SECRET = '1zHBvyQSh59yEcMKnpMY86DF';
+        }else{
+            $RAZORPAY_KEY = 'rzp_live_U7Ohduc1Dvz9aS';
+            $RAZORPAY_SECRET = '5NndwWm8GgOXdC3N3fITJJT6';
+        }
 
+  
         // die("check");
-        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+        $api = new Api($RAZORPAY_KEY, $RAZORPAY_SECRET);
 
         $order = $api->order->create([
             'amount' => $orderData->total_amount * 100, // Order amount in paise
@@ -43,6 +53,6 @@ class RazorpayController extends Controller
 
         $orderAmount = $orderData->total_amount * 100;
 
-        return view('razorpay.payment', compact('orderId', 'orderAmount', 'orderIdData','categories'));
+        return view('razorpay.payment', compact('orderId', 'orderAmount', 'orderIdData','categories', 'RAZORPAY_KEY'));
     }
 }

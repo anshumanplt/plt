@@ -153,7 +153,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     // Route::put('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
 
-    Route::get('/my-account', [OrderController::class, 'myaccount']);
+    Route::get('/my-account', [OrderController::class, 'myaccount'])->name('my-account');
 
 });
 

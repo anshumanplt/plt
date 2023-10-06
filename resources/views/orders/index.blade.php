@@ -7,23 +7,24 @@
                 <div class="col-lg-12">
                     <div class="breadcrumb__links">
                         <a href="{{ url('/') }}"><i class="fa fa-home"></i> Home</a>
-                      
+                        <a href="Javascript:void(0)">My Orders</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div><br>
     <!-- Breadcrumb End -->
 <div class="container">
     
     <div class="row">
-        <div class="col-md-3">
+        <div class="sidebar col-md-3">
             @include('myaccount_sidebar')
         </div>
-        <div class="col-md-9">
+        <div class="content col-md-9">
             <h2>My Orders</h2>
-            <table class="table">
+            <table class="table table-bordered">
                 <tr>
+                    <td>#</td>
                     <td>Order Id</td>
                     <td>Total Amount</td>
                     <td>Payment Method</td>
@@ -34,13 +35,14 @@
 
 
                 </tr>
-                @foreach ($orders as $order)
+                @foreach ($orders as $key =>  $order)
                 @php 
                     $cityData = App\Models\City::where('id', $order->address->city)->first();
                     $stateData = App\Models\State::where('id', $order->address->state)->first();
                     $countryData = App\Models\Country::where('id',$order->address->country)->first();
                 @endphp
                     <tr>
+                        <td>{{ $key + 1 }}</td>
                         <td> {{ $order->id }}</td>
                         <td> ₹{{ $order->total_amount }}</td>
                         <td>{{ $order->payment_method }}</td>
@@ -55,6 +57,7 @@
                     </tr>
                 @endforeach
             </table>
+            {{$orders->links('pagination::bootstrap-4')}}
         </div>
     </div>
 </div>

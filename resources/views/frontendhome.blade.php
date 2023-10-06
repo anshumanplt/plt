@@ -121,7 +121,7 @@
                         @if(count($product->productImages) > 0)
                             <div class="col-lg-3 col-md-4 col-sm-6 mix {{ $value->name }}">
                                 <div class="product__item">
-                                    <a href="{{ url('/product-detail') }}/{{ $product->slug }}"><img height="350" src="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif" alt="{{ $product->name }}"></a>
+                                    <a href="{{ url('/product-detail') }}/{{ $product->slug }}"><img height="100%" src="@if(count($product->productImages) > 0){{ asset('storage/'.$product->productImages[0]->image_path) }} @endif" alt="{{ $product->name }}"></a>
                                         <div style="display: none;" class="product__item__pic set-bg" data-setbg="@if(count($product->productImages) > 0) {{ asset('storage/'.$product->productImages[0]->image_path) }} @endif">
                                             <div class="label new">New</div>
                                             <ul class="product__hover">
@@ -200,7 +200,7 @@
                     @foreach($hotTrendsProducts as $product)
                         <div class="trend__item">
                             <div class="trend__item__pic">
-                                <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt="" height="50" width="50">
+                                <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt="" height="100" width="100%">
                             </div> 
                             <div class="trend__item__text">
                                 <h6><a href="{{ url('/product-detail') }}/{{ $product->slug }}">{{ $product->name }}</a></h6>
@@ -257,7 +257,7 @@
                     @foreach($bestsellerProducts as $product)
                         <div class="trend__item">
                             <div class="trend__item__pic">
-                                <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt=""  height="50" width="50">
+                                <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt=""  height="100"width="100%">
                             </div>
                             <div class="trend__item__text">
                                 <h6><a href="{{ url('/product-detail') }}/{{ $product->slug }}">{{ $product->name }}</a></h6>
@@ -283,7 +283,7 @@
                     @foreach($featureProducts as $product)
                     <div class="trend__item">
                         <div class="trend__item__pic">
-                            <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt=""  height="50" width="50">
+                            <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt=""  height="100"width="100%">
                         </div>
                         <div class="trend__item__text">
                             <h6><a href="{{ url('/product-detail') }}/{{ $product->slug }}">{{ $product->name }}</a></h6>

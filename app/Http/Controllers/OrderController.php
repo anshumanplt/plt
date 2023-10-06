@@ -24,7 +24,7 @@ class OrderController extends Controller
         $orders = Order::with('address')
                        ->where('user_id', $user->id)
                        ->orderBy('created_at', 'desc')
-                       ->get();
+                       ->paginate(5);
 
         // echo "<pre>"; print_r($orders); die("check");
         
@@ -273,11 +273,18 @@ class OrderController extends Controller
 
             // echo "<pre>"; print_r($cartItems); die("check");
 
+
+            if($request->input('payment_method') == "COD") {
+                $orderStatus = 'pending';
+            }else{
+                $orderStatus = 'payment_pending';
+            }
+
             $insertData = [
                 'user_id' => $user->id,
                 'address_id' => $defaultAddress->id,
                 'payment_method' => $request->input('payment_method'),
-                'order_state' => 'pending', // Set the initial state
+                'order_state' => $orderStatus, // Set the initial state
                 'total_amount' => 0, // Placeholder, will be updated later
             ];
 

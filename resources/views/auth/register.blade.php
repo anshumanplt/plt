@@ -66,12 +66,11 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Register') }}
                                 </button>
+                                <a href="{{ url('login') }}">Existing User?Log in</a>
                             </div>
-                            >
+
                         </div>
-                        <div class="row">
-                            <a href=""></a>
-                        </div>
+                 
                     </form>
                 </div>
             </div>

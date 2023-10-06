@@ -63,11 +63,15 @@
             <li><a href="{{ url('/cart') }}"><span class="icon_bag_alt"></span>
                 <div class="tip">
                     @if(Auth::check())
-                    @php 
-                    $cartValue = \App\Models\Cart::get();
-                    echo count($cartValue);
-                    @endphp
+                        @php 
+
+                            $cartValue = \App\Models\Cart::where('user_id', Auth::user()->id)->get();
+                          
+                            echo count($cartValue);
+                            
+                        @endphp
                         @else
+                           
                             {{ session('guest_cart') ? count(session('guest_cart')) : 0 }}
                     @endif
                 </div>
@@ -83,15 +87,16 @@
             <a href="{{ url('/register') }}">Register</a>
         </div>
     </div>
-    <!-- Offcanvas Menu End -->
 
+    <!-- Offcanvas Menu End -->
+   
     <!-- Header Section Begin -->
     <header class="header">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="{{ url('/') }}"><img src="{{ url('/frontend/img/1657366295logo.png') }}" alt=""></a>
+                        <a href="{{ url('/') }}"><img src="{{ url('/frontend/img/prettylovingthing-logo.png') }}" alt=""></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
@@ -170,7 +175,7 @@
                                 <div class="tip">  
                                     @if(Auth::check())
                                     @php 
-                                    $cartValue = \App\Models\Cart::get();
+                                    $cartValue = \App\Models\Cart::where('user_id', Auth::user()->id)->get();
                                     echo count($cartValue);
                                     @endphp
                                         @else
@@ -190,7 +195,7 @@
         </div>
     </header>
     <!-- Header Section End -->
-
+    
     @yield('content')
 
 
@@ -263,7 +268,7 @@
                     </div>
                     <p>We are Pretty Loving Thing. The brand behind fashion Freedom.We exist for the love of fashion. We have got all the permimum range of outfits you could ever need in life. from ”designer fashion for women to the latest trends in women’s fashion” From date night dress to ritual colection.</p>
                     <div class="footer__payment">
-                        <a href="javascript:void(0)"><img src="{{ url('/frontend/img/payment/razor.png') }}" height="50" width="50" alt="Razor Pay"></a>
+                        {{-- <a href="javascript:void(0)"><img src="{{ url('/frontend/img/payment/razor.png') }}" height="50" width="50" alt="Razor Pay"></a> --}}
                         {{-- <a href="#"><img src="{{ url('/frontend/img/payment/payment-2.png') }}" alt=""></a>
                         <a href="#"><img src="{{ url('/frontend/img/payment/payment-3.png') }}" alt=""></a>
                         <a href="#"><img src="{{ url('/frontend/img/payment/payment-4.png') }}" alt=""></a>
@@ -352,7 +357,16 @@
 <script src="{{ url("/frontend/js/jquery.nicescroll.min.js") }}"></script>
 <script src="{{ url("/frontend/js/main.js") }}"></script>
    {{-- toastr js --}}
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+<script>
+    function limitStringTo200Characters(inputString) {
+        if (inputString.length <= 200) {
+            return inputString; // Return the input string as is if it's 200 characters or less
+        } else {
+            return inputString.slice(0, 200) + " ..."; // Truncate the string to 200 characters and add ellipsis
+        }
+    }
+</script>
 
 
 <script>

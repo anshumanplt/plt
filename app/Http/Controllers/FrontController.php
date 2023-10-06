@@ -44,14 +44,14 @@ class FrontController extends Controller
         $data['topFiveProducts'] = $topFiveProducts;
 
         // 4. Retrieve hot trends, bestseller, and featured products with 5 products each
-        $hotTrendsProducts = Product::where('hot_trend', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
+        $hotTrendsProducts = Product::where('status', 1)->where('hot_trend', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
         $data['hotTrendsProducts'] = $hotTrendsProducts;
         // echo "<pre>"; print_r($hotTrendsProducts); die("Check");
 
-        $bestsellerProducts = Product::where('best_seller', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
+        $bestsellerProducts = Product::where('status', 1)->where('best_seller', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
         $data['bestsellerProducts'] = $bestsellerProducts;
 
-        $featureProducts = Product::where('feature', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
+        $featureProducts = Product::where('status', 1)->where('feature', 1)->has('images')->with('images')->with('productImages')->orderBy('id')->take(3)->get();
         $data['featureProducts'] = $featureProducts;
 
         $products = Product::has('images')->with('images')->with('productImages')->orderBy('id', 'DESC')->paginate(8);
@@ -81,7 +81,7 @@ class FrontController extends Controller
         $data['promotionalslider'] = Promotionalslider::where('status', 1)->get();
 
         $data['discountbanner'] = Discountbanner::where('status', 1)->first();
-
+     
         return view('frontendhome', $data);
     }
 
@@ -93,7 +93,7 @@ class FrontController extends Controller
         // Retrieve the products for the category
         // $products = $category->products;
 
-        $products = Product::where('category_id', $category->category_id)->orWhere('subcategory_id', $category->category_id)->with('productImages')->orderBy('id', 'DESC')->paginate(20);
+        $products = Product::where('status', 1)->where('category_id', $category->category_id)->orWhere('subcategory_id', $category->category_id)->with('productImages')->orderBy('id', 'DESC')->paginate(20);
         
 
         $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();

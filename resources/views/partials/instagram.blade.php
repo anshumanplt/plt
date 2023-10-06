@@ -20,7 +20,7 @@
     curl_close($curl);
 
     $response = json_decode($curlRes);
-    // echo "<pre>"; print_r($response); echo "</pre>";
+    echo "<pre>"; print_r($response); echo "</pre>";
 @endphp
 
 <!-- Instagram Begin -->

@@ -355,7 +355,7 @@
                 <div class="services__item">
                     <i class="fa fa-car"></i>
                     <h6>Free Shipping</h6>
-                    <p>For all order over $99</p>
+                    <p>For all order over ₹ 799</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-4 col-sm-6">

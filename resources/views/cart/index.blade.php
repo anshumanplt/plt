@@ -122,20 +122,61 @@
             </div>
             <div class="row">
                 <div class="col-lg-6">
-                    {{-- <div class="discount__content">
+                
+                    <div class="discount__content">
                         <h6>Discount codes</h6>
                         <form action="#">
-                            <input type="text" placeholder="Enter your coupon code">
-                            <button type="submit" class="site-btn">Apply</button>
+                            <input type="text" id="couponCode"  name="couponCode" placeholder="Enter your coupon code">
+                            <button type="button" id="applyCoupon" class="site-btn">Apply</button>
+                            <span id="couponError" style="color: red;"></span>
                         </form>
-                    </div> --}}
+                    </div>
                 </div>
                 <div class="col-lg-4 offset-lg-2">
                     <div class="cart__total__procced">
                         <h6>Cart total</h6>
                         <ul>
-                            <li>Subtotal <span>₹ {{ $cartTotal }}</span></li>
+                            @php
+                            $beforeDiscount = $cartTotal;
+                            if($discount) {
+                                if($discount->type == 'percentage') {
+                                    $discountPercentage = ($cartTotal * $discount->discount) / 100;
+                                    
+                                    if($discountPercentage > 100) {
+                                        $discount->discount = 100;
+
+                                    }else{
+                                        $discount->discount = $discountPercentage;
+                                    }
+
+                                    
+
+                                    if (($cartTotal > $discount->discount) && ($cartTotal >= 500)) {
+                                        $cartTotal = $cartTotal - $discount->discount;
+                                    }
+
+                                }else{
+                                    if (($cartTotal > $discount->discount) && ($cartTotal >= 500)) {
+                                        $cartTotal = $cartTotal - $discount->discount;
+                                    }
+                                }
+                             
+                            } 
+
+                   
+                       @endphp
+                            <li>Subtotal <span>₹ {{ $beforeDiscount }}</span></li>
                             <li>Shipping Charges <span> @if($cartTotal < 799)₹ 80 @else FREE @endif</span></li>
+                            @if($discount)
+                                @if(($cartTotal > $discount->discount) && ($cartTotal >= 500)) 
+                                    <li>Coupon Code <span> @if($discount) {{ $discount->code }} @else NA @endif</span></li>
+                                    <li>Discount <span>-₹ @if($discount){{ $discount->discount }}   @else 0 @endif</span></li>
+                                @endif
+                                @else 
+                                    <li>Coupon Code <span> NA </span></li>
+                                    <li>Discount <span>₹ 0</span></li>
+                            @endif
+                          
                             <li>Total <span>₹ @if($cartTotal < 799)  {{ $cartTotal + 80 }} @else {{ $cartTotal }} @endif</span></li>
                         </ul>
                         <a href="{{ url('checkout') }}" class="primary-btn">Proceed to checkout</a>
@@ -147,4 +188,38 @@
     </section>
     <!-- Shop Cart Section End -->
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#applyCoupon').click(function () {
+                // Get the entered coupon code
+                var couponCode = $('#couponCode').val();
+    
+                // Make an AJAX request to validate the coupon code
+                $.ajax({
+                    type: 'POST',
+                    url: '/validate-coupon', // Replace with the actual URL for coupon validation
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        couponCode: couponCode
+                    },
+                    success: function (response) {
+                        // Check the response from the server
+                        if (response.valid) {
+                            // Coupon is valid, you can proceed with your logic
+                            $('#couponError').text('Coupon applied successfully');
+                            location.reload();
+                        } else {
+                            // Coupon is invalid, display an error message
+                            $('#couponError').text('Invalid coupon code');
+                        }
+                    },
+                    error: function () {
+                        // Handle any errors from the server
+                        $('#couponError').text('An error occurred while validating the coupon');
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

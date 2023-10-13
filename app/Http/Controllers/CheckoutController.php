@@ -10,11 +10,21 @@ use App\Models\Address;
 use App\Models\City;
 use App\Models\State;
 use App\Models\Country;
+use App\Models\Coupon;
 
 class CheckoutController extends Controller
 {
     public function index()
     {
+
+        session_start();
+        $discount_code = '';
+        $discount = '';
+
+        if(isset($_SESSION['discount_code'])) {
+            $discount_code = $_SESSION['discount_code'];
+            $discount = Coupon::where('code', $discount_code)->first();
+        }
 
         $user = Auth::user();
         // $cartItems = $user->cartItems;
@@ -39,7 +49,33 @@ class CheckoutController extends Controller
 
         // echo "<pre>"; print_r($cartItems); die("check");
 
-        return view('checkout.index', compact('cartItems', 'addresses', 'categories', 'countries'));
+        return view('checkout.index', compact('cartItems', 'addresses', 'categories', 'countries', 'discount', 'discount_code'));
+    }
+
+    public function addresses(Request $request) {
+        $user = Auth::user();
+        // echo "<pre>"; print_r($user->id); echo "</pre>"; die("check");
+        $addresses = Address::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $countries = Country::get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+        $categories = $allMenu;
+
+        return view('my_account.address', compact('categories', 'addresses', 'countries'));
+    }
+
+    public function deleteaddresses(Request $request, $addId) {
+        Address::where('id', $addId)->delete();
+        return redirect()->back()->with('success', 'Address deleted successfully.');
     }
 
     public function addAddress(Request $request)
@@ -78,7 +114,9 @@ class CheckoutController extends Controller
 
         
         // echo "<pre>"; print_r($status); die("check");
-        return redirect()->route('checkout.index')->with('success', 'Address added successfully.');
+        // return redirect()->route('checkout.index')->with('success', 'Address added successfully.');
+        return redirect()->back()->with('success', 'Address added successfully.');
+
     }
 
     public function setDefaultAddress(Request $request )

@@ -24,9 +24,34 @@ class WishlistController extends Controller
 
 
         $categories = $allMenu;
-        $wishlistedProducts = $user->wishlistedProducts;
+        // $wishlistedProducts = $user->wishlistedProducts;
+        $wishlistedProducts = Wishlist::with('product', 'product.productImages')->orderBy('id', 'DESC')->get();
+
+        // echo "<pre>"; print_r($wishlistedProducts); echo "</pre>"; die("check");
 
         return view('wishlist.index', compact('wishlistedProducts', 'categories'));
+    }
+
+
+    public function mywishlist() {
+        $user = Auth::user();
+        $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
+
+        $allMenu = [];
+        foreach($categories as $value) {
+            $subMenu = Category::where('parent_id', $value->category_id)->get();
+            $value['submenu'] = $subMenu;
+            $allMenu[] = $value;
+        }
+
+
+
+        $categories = $allMenu;
+        // $wishlistedProducts = $user->wishlistedProducts;
+        $wishlistedProducts = Wishlist::with('product', 'product.productImages')->orderBy('id', 'DESC')->get();
+
+
+        return view('my_account.wishlist', compact('wishlistedProducts', 'categories'));
     }
 
     public function addToWishlist(Request $request, $productId)
@@ -55,6 +80,7 @@ class WishlistController extends Controller
 
         $wishlistItem = Wishlist::find($wishlistId);
 
+        // echo "<pre>"; print_r($wishlistItem); die("check");
       
 
         if ($wishlistItem && $wishlistItem->user_id === $user->id) {

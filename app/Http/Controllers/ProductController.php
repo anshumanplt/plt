@@ -56,7 +56,7 @@ class ProductController extends Controller
         $csvData = file_get_contents($file);
         $rows = array_map('str_getcsv', explode("\n", $csvData));
 
-        // echo "<pre>"; print_r($rows); echo "</pre>"; die("check data");
+        
 
         // Perform your data import logic here
         // You can loop through $rows and insert data into your database
@@ -68,7 +68,7 @@ class ProductController extends Controller
             return !empty(array_filter($row));
         });
 
-
+        // echo "<pre>"; print_r($rows); echo "</pre>"; die("check data");
 
         $finalData = [];
         $totalProductInserted = 0;
@@ -97,12 +97,13 @@ class ProductController extends Controller
                     
                 ];
 
-                // echo "<pre>"; print_r($data); echo "</pre>"; die("check");
+                // echo "<pre>"; print_r($data); print_r($checkProduct); echo "</pre>"; die("check");
 
                 if($checkProduct) { 
                     $duplicateProduct[] = $data;
 
-                    
+                    // echo "<pre>"; print_r($data); echo "</pre>"; die("product exists");
+
 
                     $sizeAttribute = AttributeValue::where('value', $row[6])->first();
                     if(!$sizeAttribute) {
@@ -221,8 +222,40 @@ class ProductController extends Controller
 
                     continue;
                 }
+                
+                $addProduct = Product::create($data); 
 
-                $addProduct = Product::create($data);
+                
+                // $data = [
+                //     'sku'               => $row[0],
+                //     'slug'              => $slug,
+                //     'meta_title'        => $row[15],
+                //     'meta_description'  => $row[16],
+                //     'subcategory_id'    => $request->input('subcategory_id'),
+                //     'category_id'       => $request->input('category_id'),
+                //     'brand_id'          => $request->input('brand_id'),
+                //     'name'              => $row[15],
+                //     'description'       => $row[16],
+                //     'price'             => $row[2],
+                //     'sale_price'        => $row[3],
+                //     'status'            => 0
+                    
+                // ];
+
+                // $product = new Product;
+                // $product->
+                // $product->slug = $row[0];
+                // $product->meta_title = $slug;
+                // $product->meta_description = $row[15];
+                // $product->subcategory_id = $row[16];
+
+                // $product->category_id = $row[0];
+                // $product->meta_title = $slug;
+                // $product->meta_description = $row[15];
+                // $product->subcategory_id = $row[16];
+                // $product->save();
+                
+                // echo "<pre>"; print_r($addProduct); echo "</pre>"; die("product  not exists");
 
                 if($addProduct) {
                     $productFeaturedata = [

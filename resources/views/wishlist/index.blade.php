@@ -14,19 +14,19 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($wishlistedProducts as $product)
+            @foreach ($wishlistedProducts as $value)
                 <tr>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->description }}</td>
+                    <td>{{ $value->product->name }}</td>
+                    <td>{{ $value->product->description }}</td>
                     <td>
-                        @if ($product->productImages->count() > 0)
-                            <img src="{{ asset('storage/'.$product->productImages[0]->image_path) }}" alt="Product Image" style="max-width: 100px;">
+                        @if ($value->product->productImages->count() > 0)
+                            <img src="{{ asset('storage/'.$value->product->productImages[0]->image_path) }}" alt="Product Image" style="max-width: 100px;">
                         @else
                             No Image
                         @endif
                     </td>
                     <td>
-                        <form action="{{ route('wishlist.remove', $product->id) }}" method="POST">
+                        <form action="{{ route('wishlist.remove', $value->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Remove</button>

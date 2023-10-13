@@ -227,11 +227,51 @@
                             </div>
                             <div class="checkout__order__total">
                                 <ul>
-                                    <li>Subtotal <span>₹ {{ $cartTotal }}</span></li>
+                                    @php
+                                    $beforeDiscount = $cartTotal;
+                                    if($discount) {
+                                        if($discount->type == 'percentage') {
+                                            $discountPercentage = ($cartTotal * $discount->discount) / 100;
+                                            
+                                            if($discountPercentage > 100) {
+                                                $discount->discount = 100;
+        
+                                            }else{
+                                                $discount->discount = $discountPercentage;
+                                            }
+        
+                                            
+        
+                                            if (($cartTotal > $discount->discount) && ($cartTotal >= 500)) {
+                                                $cartTotal = $cartTotal - $discount->discount;
+                                            }
+        
+                                        }else{
+                                            if (($cartTotal > $discount->discount) && ($cartTotal >= 500)) {
+                                                $cartTotal = $cartTotal - $discount->discount;
+                                            }
+                                        }
+                                     
+                                    } 
+        
+                           
+                               @endphp
+                                    {{-- <li>Subtotal <span>₹ {{ $cartTotal }}</span></li>
                                     <li>Shipping Charges <span> @if($cartTotal < 799)₹ 80 @else FREE @endif</span></li>
                                     <li>Total <span>₹ @if($cartTotal < 799)  {{ $cartTotal + 80 }} @else {{ $cartTotal }} @endif</span></li>
-                                    
-                          
+                                     --}}
+                                     <li>Shipping Charges <span> @if($cartTotal < 799)₹ 80 @else FREE @endif</span></li>
+                                     @if($discount)
+                                     @if(($cartTotal > $discount->discount) && ($cartTotal >= 500)) 
+                                         <li>Coupon Code <span> @if($discount) {{ $discount->code }} @else NA @endif</span></li>
+                                         <li>Discount <span>₹ @if($discount){{ $discount->discount }}   @else 0 @endif</span></li>
+                                     @endif
+                                     @else 
+                                         <li>Coupon Code <span> NA </span></li>
+                                         <li>Discount <span>₹ 0</span></li>
+                                 @endif
+                               
+                                 <li>Total <span>₹ @if($cartTotal < 799)  {{ $cartTotal + 80 }} @else {{ $cartTotal }} @endif</span></li>
                                 </ul>
                             </div>
                             <form action="{{ route('orders.place-order') }}" method="POST">
@@ -242,6 +282,8 @@
                                     <option value="COD">COD</option>
                                     <option value="Netbanking">Netbanking</option>
                                 </select>
+
+                                <input type="hidden" name="discount_code" value="{{ $discount_code }}">
                                 {{-- <input type="hidden" name="address_id" value=""> --}}
                                 {{-- <label for="cod">
                                     Cash on delivery

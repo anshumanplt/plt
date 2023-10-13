@@ -62,6 +62,7 @@ class FrontController extends Controller
         $categoryProduct = [];
         if($homePageSetting) {
             $categoryIds = explode(',',$homePageSetting->category_ids);
+
             $categoryProduct = Category::whereIn('category_id', $categoryIds)->with('products', 'products.productImages')->get();
 
             // echo "<pre>"; print_r($categoryProduct); die("check");
@@ -93,8 +94,15 @@ class FrontController extends Controller
         // Retrieve the products for the category
         // $products = $category->products;
 
-        $products = Product::where('status', 1)->where('category_id', $category->category_id)->orWhere('subcategory_id', $category->category_id)->with('productImages')->orderBy('id', 'DESC')->paginate(20);
+        $query = ['category_id' => $category->category_id];
+        if($category->parent_id) {  
+            $query = ['subcategory_id' => $category->category_id];
+        }
+
+        $products = Product::where('status', 1)->where($query)->with('productImages')->orderBy('id', 'DESC')->paginate(20);
         
+        // echo "<pre>"; print_r($category); print_r($products); die("check");
+
 
         $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
 

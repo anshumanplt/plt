@@ -50,20 +50,11 @@
       }
     }
 </style>
+<div class="card">
+  <a class="{{ Route::is('my-account') ? 'active' : '' }}" href="{{ url('/my-account') }}">Dashboard</a>
+  <a class="{{ Route::is('account.addresses') ? 'active' : '' }}" href="{{ route('account.addresses') }}">My Addresses</a>
+  <a class="{{ Route::is('account.profile') ? 'active' : '' }}" href="{{ route('account.profile') }}">My Profile</a>
+  <a class="{{ Route::is('account.wishlist') ? 'active' : '' }}" href="{{ route('account.wishlist') }}">My Wishlist</a>
 
-<a class="{{ Route::is('my-account') ? 'active' : '' }}" href="{{ url('/my-account') }}">Dashboard</a>
-<a class="{{ Route::is('my-account') ? 'active' : '' }}" href="{{ url('/my-account') }}">My Addresses</a>
-<a class="{{ Route::is('orders.index') ? 'active' : '' }} {{ Route::is('orders.show') ? 'active' : '' }}" href="{{ route('orders.index') }}">My orders</a>
-{{-- <a href="#contact">Contact</a>
-<a href="#about">About</a> --}}
-{{-- <nav class="myaccount-nav" style="padding-top: 10%; border: none;">
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url('/my-account') }}">Dashboard</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ Route::is('orders.index') ? 'active' : '' }}" href="{{ route('orders.index') }}">Orders</a>
-        </li>
-        <!-- Add more links as needed -->
-    </ul>
-</nav> --}}
+  <a class="{{ Route::is('orders.index') ? 'active' : '' }} {{ Route::is('orders.show') ? 'active' : '' }}" href="{{ route('orders.index') }}">My orders</a>
+</div>

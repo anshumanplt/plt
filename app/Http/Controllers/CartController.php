@@ -7,6 +7,8 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Models\Coupon;
+
 class CartController extends Controller
 {
 
@@ -128,10 +130,12 @@ class CartController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             $user->carts()->where('sku', $sku)->delete();
-
+        
+            
             // Old commented code
             // $user->carts()->where('product_id', $productId)->delete();
         } else {
+     
             // If guest, remove from session cart
             $guestCart = session('guest_cart', []);
             if (isset($guestCart[$sku])) {
@@ -145,6 +149,15 @@ class CartController extends Controller
 
     public function index()
     {
+        session_start();
+        $discount_code = '';
+        $discount = '';
+
+        if(isset($_SESSION['discount_code'])) {
+            $discount_code = $_SESSION['discount_code'];
+            $discount = Coupon::where('code', $discount_code)->first();
+        }
+
         $cartItems = [];
 
 
@@ -209,112 +222,9 @@ class CartController extends Controller
 
 
 
-        return view('cart.index', compact('cartItems', 'categories'));
+        return view('cart.index', compact('cartItems', 'categories', 'discount', 'discount_code'));
     }
 
-    // public function add(Request $request, $productId)
-    // {
-    //     $product = Product::findOrFail($productId);
-
-    //     // Check if the item already exists in the cart
-    //     $existingCartItem = Cart::where('user_id', auth()->id())
-    //         ->where('product_id', $productId)
-    //         ->first();
-
-    //     if ($existingCartItem) {
-    //         $existingCartItem->quantity += 1;
-    //         $existingCartItem->save();
-    //     } else {
-    //         Cart::create([
-    //             'user_id' => auth()->id(),
-    //             'product_id' => $productId,
-    //             'quantity' => 1,
-    //         ]);
-    //     }
-
-        
-    //     // Recalculate and update the cart count in the session
-    //     $cartCount = Cart::where('user_id', auth()->id())->sum('quantity');
-    //     session(['cart.count' => $cartCount]);
-
-    //     return redirect()->back()->with('success', 'Product added to cart.');
-    // }
-
-    // // public function update(Request $request, $productId)
-    // // {
-    // //     $product = Product::findOrFail($productId);
-
-    // //     $cartItem = Cart::where('user_id', auth()->id())
-    // //         ->where('product_id', $productId)
-    // //         ->firstOrFail();
-
-    // //     $cartItem->quantity = $request->input('quantity');
-    // //     $cartItem->save();
-
-    // //     return redirect()->route('cart.index')->with('success', 'Cart updated.');
-    // // }
-
-    // public function update(Request $request, $productId)
-    // {
-    //     $product = Product::findOrFail($productId);
-
-    //     $cartItem = Cart::where('user_id', auth()->id())
-    //         ->where('product_id', $productId)
-    //         ->firstOrFail();
-
-    //     $newQuantity = $request->input('quantity');
-
-    //     if ($newQuantity <= 0) {
-    //         // Remove cart item if the new quantity is less than or equal to 0
-    //         $cartItem->delete();
-    //         return redirect()->route('cart.index')->with('success', 'Product removed from cart.');
-    //     }
-
-    //     $cartItem->quantity = $newQuantity;
-    //     $cartItem->save();
-
-    //     // Recalculate and update the cart count in the session
-    //     $cartCount = Cart::where('user_id', auth()->id())->sum('quantity');
-    //     session(['cart.count' => $cartCount]);
-
-    //     return redirect()->route('cart.index')->with('success', 'Cart updated.');
-    // }
-
-    // public function remove($productId)
-    // {
-    //     Cart::where('user_id', auth()->id())
-    //         ->where('product_id', $productId)
-    //         ->delete();
-
-        
-    //     // Recalculate and update the cart count in the session
-    //     $cartCount = Cart::where('user_id', auth()->id())->sum('quantity');
-    //     session(['cart.count' => $cartCount]);
-
-    //     return redirect()->route('cart.index')->with('success', 'Product removed from cart.');
-    // }
-
-    // public function index()
-    // {
-    //     // $cartItems = Cart::where('user_id', auth()->id())->with('product')->get();
-    //     $cartItems = Cart::where('user_id', auth()->id())->with('product.images')->get();
-
-        
-    //     // 1. Retrieve the top 5 categories
-    //     $categories = Category::where('parent_id', 	NULL)->orderBy('category_id')->take(5)->get();
-
-    //     $allMenu = [];
-    //     foreach($categories as $value) {
-    //         $subMenu = Category::where('parent_id', $value->category_id)->get();
-    //         $value['submenu'] = $subMenu;
-    //         $allMenu[] = $value;
-    //     }
-
-
-
-    //     $categories= $allMenu;
-
-    //     return view('cart.index', compact('cartItems','categories'));
-    // }
+   
 
 }

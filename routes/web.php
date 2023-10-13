@@ -33,6 +33,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\InstagramController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\UserController;
 
 Route::post('admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
@@ -43,6 +45,8 @@ Route::prefix('admin')->group(function () {
 });
 
 Route::middleware('auth:admin')->group(function () {
+
+    Route::resource('coupons', CouponController::class);
 
     Route::get('products/imports', [ProductController::class, 'importProduct'])->name('products.import');
     Route::post('products/imports', [ProductController::class, 'getcsvfile'])->name('products.import.upload.csv');
@@ -122,12 +126,15 @@ Route::middleware('auth:admin')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::post('/validate-coupon', [CouponController::class, 'validateCoupon']);
+    
     // Add product to wishlist
     Route::get('/wishlist/add/{productId}', [WishlistController::class, 'addToWishlist'])
         ->name('wishlist.add');
 
     // Remove product from wishlist
-    Route::get('/wishlist/remove/{wishlistId}', [WishlistController::class, 'removeFromWishlist'])
+    Route::delete('/wishlist/remove/{wishlistId}', [WishlistController::class, 'removeFromWishlist'])
         ->name('wishlist.remove');
 
     Route::get('/wishlist', [WishlistController::class, 'index'])
@@ -154,6 +161,13 @@ Route::middleware(['auth'])->group(function () {
     // Route::put('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
 
     Route::get('/my-account', [OrderController::class, 'myaccount'])->name('my-account');
+
+    Route::get('/account/addresses', [CheckoutController::class, 'addresses'])->name('account.addresses');
+    Route::get('/account/delete/addresses/{id}', [CheckoutController::class, 'deleteaddresses'])->name('account.addresses.delete');
+    Route::get('/account/my-wishlist', [WishlistController::class, 'mywishlist'])->name('account.wishlist');
+    Route::get('/account/profile', [UserController::class, 'profile'])->name('account.profile');
+    Route::post('/check-old-password', [UserController::class, 'checkOldPassword'])->name('check.old.password');
+    Route::post('/change-password', [UserController::class, 'changePassword'])->name('change.password.post');
 
 });
 

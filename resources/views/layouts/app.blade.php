@@ -146,7 +146,12 @@
               <i class="mdi mdi-store  menu-icon"></i>
             </a>
         </li>
-     
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('coupons') }}">
+              <span class="menu-title">Coupons</span>
+              <i class="mdi mdi-store  menu-icon"></i>
+            </a>
+        </li>
          
             
            

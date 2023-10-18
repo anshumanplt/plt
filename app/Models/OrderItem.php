@@ -14,6 +14,7 @@ class OrderItem extends Model
         'quantity',
         'unit_price',
         'subtotal',
+        'sku'
         // Add other fields as needed
     ];
 

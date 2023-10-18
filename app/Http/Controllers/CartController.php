@@ -37,19 +37,36 @@ class CartController extends Controller
             //     'sku' => $sku
             // ]);
 
-            $cart = Cart::updateOrCreate([
-                'user_id' => $user->id
-            ],[
-                'product_id' => $productId,
-                'quantity' => $quantity,
+            $cartData = Cart::where([
+                'user_id' => $user->id,
                 'sku' => $sku
-            ]);
+            ])->first();
 
-            // $user->carts()->updateOrCreate(
-            //     ['product_id' => $productId],
-            //     ['quantity' => $quantity],
-            //     ['sku' => $sku]
-            // );
+            if($cartData) {
+                $cartQuantity = ($cartData->quantity + 1);
+
+                $checkupdate = Cart::where('id', $cartData->id)->update(['quantity' => $cartQuantity]);
+                // echo "Qunatity : ".$cartQuantity."<br>";
+                // echo "<pre>"; print_r($checkupdate); echo "</pre>"; die("check");
+            }else{
+                Cart::create([
+                    'user_id' => $user->id,
+                    'product_id' => $productId,
+                    'quantity' => $quantity,
+                    'sku' => $sku
+                ]);
+            }
+
+            // $cart = Cart::updateOrCreate([
+            //     'user_id' => $user->id,
+            //     'sku' => $sku
+            // ],[
+            //     'product_id' => $productId,
+            //     'quantity' => $quantity,
+            //     'sku' => $sku
+            // ]);
+
+
         } else {
             $guestCart = session('guest_cart', []);
             if (isset($guestCart[$sku])) {

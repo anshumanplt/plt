@@ -3,6 +3,14 @@
 @extends('layouts.app') {{-- Use your admin layout --}}
 
 @section('content')
+
+<style>
+
+table td {
+    word-break: break-all;
+    word-wrap: break-word;
+}
+</style>
 <div class="card">
     <div class="card-body">
 
@@ -21,14 +29,14 @@
                     </ul>
                 </div>
             @endif
-            <table class="table">
+            <table class="table" >
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Order Id</th>
                         <th>Total Amount</th>
                         <th>Payment Method</th>
-                        <th>Shipping Address</th>
+                        <th style="width: 30%;">Shipping Address</th>
                         <th>Status</th>
                         <th>Action</th>
     
@@ -48,7 +56,7 @@
                         <td> {{ $order->id }}</td>
                         <td> ₹{{ $order->total_amount }}</td>
                         <td>{{ $order->payment_method }}</td>
-                        <td> <p><b>Address 1 :</b>{{ $order->address->address1 }}</p><br>
+                        <td style="width: 30%; break-after :auto;"> <p><b>Address 1 :</b>{{ $order->address->address1 }}</p><br>
                             <p><b>Address 2 :</b>{{ $order->address->address2 }}</p><br>
                             <p><b>City :</b>{{ $cityData->name }}, <br><b>State :</b>{{ $stateData->name }},<br> <b>Country :</b>{{ $countryData->name }}</p></td>
                         <td>{{ $order->order_state }}</td>

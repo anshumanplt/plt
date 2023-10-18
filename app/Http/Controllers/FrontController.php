@@ -99,7 +99,7 @@ class FrontController extends Controller
             $query = ['subcategory_id' => $category->category_id];
         }
 
-        $products = Product::where('status', 1)->where($query)->with('productImages')->orderBy('id', 'DESC')->paginate(20);
+        $products = Product::where('status', 1)->where($query)->with('productImages')->orderBy('id', 'DESC')->inRandomOrder()->paginate(20);
         
         // echo "<pre>"; print_r($category); print_r($products); die("check");
 

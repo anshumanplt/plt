@@ -23,7 +23,7 @@
     <section class="shop spad">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3 col-md-3">
+                <div class="col-lg-3 col-md-3 order-sm-first order-last">
                     <div class="shop__sidebar">
                         <div class="sidebar__categories">
                             <div class="section-title">

@@ -315,6 +315,11 @@
                 </div>
             </div>
             <div class="col-lg-6 p-0">
+                <div class="discount__pic">
+                    <img src="{{ url('/frontend/img/') }}/7.jpg" alt="">
+                </div>
+            </div>
+            <div class="col-lg-6 p-0" style="display: none;">
                 <div class="discount__text">
                     <div class="discount__text__title">
                         <span>Discount</span>

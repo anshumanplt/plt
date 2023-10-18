@@ -201,7 +201,8 @@
                     url: '/validate-coupon', // Replace with the actual URL for coupon validation
                     data: {
                         _token: '{{ csrf_token() }}',
-                        couponCode: couponCode
+                        couponCode: couponCode,
+                        orderId : 
                     },
                     success: function (response) {
                         // Check the response from the server

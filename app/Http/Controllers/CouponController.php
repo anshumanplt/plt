@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Coupon;
+use App\Models\Order;
 use Carbon\Carbon;
 
 class CouponController extends Controller
@@ -26,8 +27,13 @@ class CouponController extends Controller
         // return 0; // Coupon is not valid
     
         if ($coupon) {
+            
             session_start();
             $_SESSION['discount_code'] = $couponCode;
+
+            
+
+
             return response()->json(['valid' => true, 'coupon'=>$coupon]);
         } else {
             return response()->json(['valid' => false]);

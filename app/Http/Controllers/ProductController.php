@@ -32,7 +32,9 @@ class ProductController extends Controller
     public function importProduct() {
 
         $brands = Brand::all();
-        $categories = Category::all();
+        
+        $categories = Category::where('parent_id', NULL)->get();
+
         $csvData = [];
         $report = [
             'totalProductInserted' => 0,

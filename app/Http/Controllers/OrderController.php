@@ -11,6 +11,9 @@ use App\Models\Address;
 use Illuminate\Support\Facades\Auth;
 use App\Models\OrderItem;
 use App\Models\Category;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmation;
+
 
 
 
@@ -18,7 +21,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-
+       
         $user = Auth::user();
     
         // Fetch the user's orders along with related address information
@@ -47,7 +50,7 @@ class OrderController extends Controller
 
     public function getallorders() {
    
-    
+
         // Fetch the user's orders along with related address information
         $orders = Order::with('address')
                   
@@ -59,7 +62,12 @@ class OrderController extends Controller
     }
 
     public function showadmin(Order $order) {
+        
         $order->load('orderItems','orderItems.product');
+
+        $order = Order::where('id', $order->id)->with('orderItems','orderItems.product', 'address', 'address.addCountry', 'address.addState', 'address.addCity')->first();
+
+
         return view('admin.orders.show', compact('order'));
     }
 
@@ -202,7 +210,8 @@ class OrderController extends Controller
 
     
     public function show(Order $order)
-    {   
+    {       
+
 
         // Load the order details along with related order items and products
         $order->load('orderItems','orderItems.product');
@@ -311,11 +320,12 @@ class OrderController extends Controller
              
                 // Create and store the order item
                 $orderItem = new OrderItem([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'quantity' => $cartItem->quantity,
-                    'unit_price' => $getPrice->price,
-                    'subtotal' => $subtotal,
+                    'order_id'      => $order->id,
+                    'product_id'    => $product->id,
+                    'quantity'      => $cartItem->quantity,
+                    'unit_price'    => $getPrice->price,
+                    'subtotal'      => $subtotal,
+                    'sku'           => $cartItem->sku
                 ]);
 
                 $orderItem->save();
@@ -339,10 +349,22 @@ class OrderController extends Controller
             // Update the calculated total amount in the order
             $order->update(['total_amount' => $totalAmount]);
            
+
+
+
             // Commit the transaction
             DB::commit();
+
+
             
             if($request->input('payment_method') == "COD") {
+                
+                // $order = Order::where('id', $order->id)->with('address', 'address.addCountry', 'address.addState', 'address.addCity')->first();
+                $order = Order::where('id', $order->id)->with('address', 'address.addCountry', 'address.addState', 'address.addCity')->first();
+
+                $orderItems = OrderItem::where('order_id', $order->id)->with('product', 'product.productImages')->get();
+                
+                Mail::to($user->email)->send(new OrderConfirmation($order, $orderItems));
                  return redirect()->route('orders.index')->with('success', 'Order placed successfully.');
             }else{
                 return redirect()->route('payment.process', $order->id);

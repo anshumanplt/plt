@@ -35,4 +35,19 @@ class Address extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+    public function addCountry()
+    {
+        return $this->belongsTo(Country::class, 'country');
+    }
+
+    public function addState()
+    {
+        return $this->belongsTo(State::class, 'state');
+    }
+
+    public function addCity()
+    {
+        return $this->belongsTo(City::class, 'city');
+    }
 }
